@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/08 18:34:40 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/11 20:18:32 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -44,6 +44,7 @@ COUNT		= 1
 LIBFT		= -L $(LIB_PATH)
 LIBS		= $(LIBFT) -lft
 INCLUDES	= -I./ -I $(LIB_PATH)/$(INC_PATH) -I $(INC_PATH)
+LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
 
 # Sources #
 SRCS_NM 	= \
@@ -72,14 +73,18 @@ PERCENT_SER    	= $(shell echo $$(( ($(COUNT_S) * 100) / $(NB_FILES_SER))))
 PERCENT_CLI    	= $(shell echo $$(( ($(COUNT_C) * 100) / $(NB_FILES_CLI))))
 
 # Exceptions #
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re ft_printf
 
 # Compilation rules #
-all: $(FT_NM) $(FT_OTOOL)
+all: ft_printf $(FT_NM) $(FT_OTOOL)
+
+ft_printf:
+	@printf "\n[Compiling ft_printf] :\n"
+	make -C ft_printf/
 
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)
-	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS)
+	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS) $(LIBPRINTF)
 	@printf "$(GREEN)\r\033[Kft_nm is ready to works\n$(END_COL)"
 
 $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
