@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/11 20:18:32 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/12 16:08:56 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -27,6 +27,7 @@ INC_PATH	= includes/
 
 # Sub_dirs #
 DIR_NM		= ft_nm
+LIB_NM		= $(DIR_NM)/parse_macho
 DIR_OTOOL	= ft_otool
 
 # Colors #
@@ -47,12 +48,13 @@ INCLUDES	= -I./ -I $(LIB_PATH)/$(INC_PATH) -I $(INC_PATH)
 LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
 
 # Sources #
-SRCS_NM 	= \
-			$(DIR_NM)/main.c	\
-			$(DIR_NM)/setup_struct.c \
-			$(DIR_NM)/handle_64_binary.c \
-			$(DIR_NM)/handle_32_binary.c \
-			$(DIR_NM)/utils.c
+SRCS_NM 	=								\
+			$(DIR_NM)/main.c				\
+			$(DIR_NM)/setup_struct.c		\
+			$(DIR_NM)/handle_64_binary.c	\
+			$(DIR_NM)/handle_32_binary.c	\
+			$(DIR_NM)/utils.c				\
+			$(LIB_NM)/get_header.c
 
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
