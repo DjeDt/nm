@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/12 16:08:56 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/18 16:16:22 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -17,7 +17,7 @@ FT_OTOOL		= ft_otool
 # compilation #
 CC			= gcc
 FLAGS		= -Wall -Wextra -Werror
-ADDFLAGS	= #-O1 -g3 -fsanitize=address -fno-omit-frame-pointer
+ADDFLAGS	= #-O1 -g3 -fsanitize=address -fno-omit-frame-pointer -Wpadded
 
 # Directories #
 OBJ_PATH	= obj
@@ -54,7 +54,11 @@ SRCS_NM 	=								\
 			$(DIR_NM)/handle_64_binary.c	\
 			$(DIR_NM)/handle_32_binary.c	\
 			$(DIR_NM)/utils.c				\
-			$(LIB_NM)/get_header.c
+			$(LIB_NM)/parse_header.c		\
+			$(LIB_NM)/parse_load_command.c	\
+			$(LIB_NM)/parse_section.c		\
+			$(LIB_NM)/parse_symbol_table.c	\
+			$(LIB_NM)/parse_segment.c
 
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
@@ -75,7 +79,7 @@ PERCENT_SER    	= $(shell echo $$(( ($(COUNT_S) * 100) / $(NB_FILES_SER))))
 PERCENT_CLI    	= $(shell echo $$(( ($(COUNT_C) * 100) / $(NB_FILES_CLI))))
 
 # Exceptions #
-.PHONY: all clean fclean re ft_printf
+.PHONY: all clean fclean re ft_printf test
 
 # Compilation rules #
 all: ft_printf $(FT_NM) $(FT_OTOOL)
@@ -83,6 +87,9 @@ all: ft_printf $(FT_NM) $(FT_OTOOL)
 ft_printf:
 	@printf "\n[Compiling ft_printf] :\n"
 	make -C ft_printf/
+
+test:
+	gcc test/test0.c -o t0.out
 
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)

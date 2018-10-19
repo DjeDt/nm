@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,135 +6,181 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 14:46:43 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/12 19:40:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/19 17:46:20 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-void	print_filetype_64(struct mach_header_64 *header)
+void	print_data(void)
 {
-	if (header->filetype == MH_OBJECT)
-		ft_putendl("1: relocatable object file");
-	if (header->filetype == MH_EXECUTE)
-		ft_putendl("2: demand paged executable file");
-	if (header->filetype == MH_FVMLIB)
-		ft_putendl("3: fixed VM shared library file");
-	if (header->filetype == MH_CORE)
-		ft_putendl("4: core file");
-	if (header->filetype == MH_PRELOAD)
-		ft_putendl("5: preloaded executable file");
-	if (header->filetype == MH_DYLIB)
-		ft_putendl("6: dynamically bound shared library");
-	if (header->filetype == MH_DYLINKER)
-		ft_putendl("7: dynamic link editor");
-	if (header->filetype == MH_BUNDLE)
-		ft_putendl("8: dynamically bound bundle file");
-	if (header->filetype == MH_DYLIB_STUB)
-		ft_putendl("9: shared library stub for static");
-	if (header->filetype == MH_DSYM)
-		ft_putendl("10: companion file with only debug");
-	if (header->filetype == MH_KEXT_BUNDLE)
-		ft_putendl("11: x86_64 kexts");
-	ft_putchar('\n');
+	t_sym *tmp;
+
+	tmp = sym;
+	while (tmp != NULL)
+	{
+		if (tmp->sym_value == 0)
+			printf("%16s %c %s\n", "", tmp->sym_type, tmp->sym_name);
+		else
+			printf("%016lx %c %s\n", tmp->sym_value, tmp->sym_type, tmp->sym_name);
+		tmp = tmp->next;
+	}
 }
 
-int		handle_specific_64(t_binary fileinfo)
+void	push_chunk(t_sym *new, t_sym **head, int sort_func(const char *s1 ,const char *s2))
+{
+	t_sym *current;
+
+	if (!new)
+		return ;
+	if ((*head) == NULL || sort_func((*head)->sym_name, new->sym_name) >= 0)
+	{
+		new->next = (*head);
+		(*head) = new;
+	}
+	else
+	{
+		current = (*head);
+		while (current->next != NULL && sort_func(current->next->sym_name, new->sym_name) < 0)
+			current = current->next;
+		new->next = current->next;
+		current->next = new;
+	}
+}
+
+t_sym	*new_chunk(void *sym_name, unsigned long sym_value, char type)
+{
+	t_sym *ret;
+
+	ret = (t_sym*)malloc(sizeof(t_sym));
+	if (!ret)
+		return (NULL);
+	ret->sym_type = type;
+	ret->sym_name = sym_name;
+	ret->sym_value = sym_value;
+	ret->next = NULL;
+	return (ret);
+}
+
+int		handle_specific_64(t_binary *fileinfo)
 {
 	ft_putendl("specific 64 bits binary");
 	(void)fileinfo;
 	return (SUCCESS);
 }
 
-void	print_symbol_64(struct load_command *load_command, struct mach_header_64 *header, t_binary fileinfo)
+void	browse_symtab(struct symtab_command *symtab, struct nlist_64 *el, char *str, t_binary *fileinfo)
 {
-	char					*str;
-	uint32_t				count;
-	struct nlist_64			*el;	// elem_list
-	struct symtab_command	*symbol;
-
-	count = -1;
-
-	symbol = get_symbol_table_64(load_command);
-	if (symbol == NULL)
-	{
-		ft_putendl_fd("error, can't found symbol table", STDERR_FILENO);
-		return ;
-	}
-	el = get_elem_list_64(header, symbol);
-	if (el == NULL)
-	{
-		ft_putendl_fd("error, can't found elem list", STDERR_FILENO);
-		return ;
-	}
-	str = get_symbol_name_64(header, symbol);
-	(void)fileinfo;
-	while (++count < symbol->nsyms)
-	{
-		parse_symbol_elem(el[count]);
-		ft_putchar(' ');
-
-		ft_putendl("next symbol");
-		// valeur du symbole (offset)
-//		ft_puthex(el[count].n_value);
-//		printf("%016llx %s\n", el[count].n_value, str + el[count].n_un.n_strx);
- 		// nom du symbole
-//		ft_putendl(str + el[count].n_un.n_strx);
-	}
-}
-
-void	print_section_64(struct load_command *load_command)
-{
-	unsigned int				count;
-	struct segment_command_64	*segment;
-	struct section_64			*section;
+	size_t	count;
+	char	c;
+	t_sym	*new;
 
 	count = 0;
-	segment = get_segment_64(load_command);
-	if (segment == NULL)
-		return ;
-	ft_putstr("segment name: "); ft_putendl(segment->segname);
-	section = get_section_64(segment);
-	while (section != NULL && ++count < segment->nsects)
+	while (count < symtab->nsyms)
 	{
-		printf("\tsection -> %p -> %s | %s\n", &section->addr, section->sectname, section->segname);
-		section = get_next_section_64(section);
+		c = '?';
+//--------------
+		/*
+		  OK    U (undefined)
+		  OK    A (absolute)
+		  OK	T (text section symbol)
+		  OK	D (data section symbol)
+		  OK	B (bss section symbol)
+		  C (common symbol)
+		  - (for debugger symbol table entries; see -a below)
+		  OK	S (symbol in a section other than those above)
+		  OK	I  (indirect  symbol)
+
+		  Tips:
+		  If the symbol is local (non-external), the symbol's type is instead represented by the corresponding lowercase letter.
+		  u in a dynamic shared library indicates a undefined reference to a private  external  in  another  module  in  the  same library.
+		*/
+//		c = parse_symbol_elem2(el[count].n_type);
+
+		size_t type = el[count].n_type;
+		if ((type & N_TYPE) == N_UNDF)
+			c = 'U';
+		else if ((type & N_TYPE) == N_ABS)
+			c = 'A';
+		else if ((type & N_TYPE) == N_SECT)
+		{
+			struct mach_header_64		*header;
+			header = get_header_64(fileinfo->ptr);
+
+			struct load_command			*load_command;
+			load_command = get_load_command_64(header, fileinfo);
+
+			struct segment_command_64	*segment;
+			segment = get_segment_64(load_command);
+
+			struct section_64			*section;
+			section = (struct section_64*)&segment[el[count].n_sect];
+
+			if (ft_strncmp(section->sectname, "__text", 6) == 0)
+				c = 'T';
+			else if (ft_strncmp(section->sectname, "__data", 6) == 0)
+					c = 'D';
+			else if (ft_strncmp(section->sectname, "__bss", 5) == 0)
+				c = 'B';
+			else
+				c = 'S';
+		}
+		else if ((type & N_TYPE) == N_PBUD)
+			c = 'U';
+		else if ((type & N_TYPE) == N_INDR)
+			c = 'I';
+		if (!(type & N_EXT))
+			c = ft_tolower(c);
+//--------------
+
+		if (el[count].n_value == 0)
+			new = new_chunk(str + el[count].n_un.n_strx, 0, c);
+		else
+			new = new_chunk(str + el[count].n_un.n_strx, el[count].n_value, c);
+		push_chunk(new, &sym, ft_strcmp);
+		count++;
 	}
-	return ;
 }
 
-int		handle_64(t_binary fileinfo)
+void	print_symbol_64(struct load_command *load_command, struct mach_header_64 *header, t_binary *fileinfo)
+{
+	char					*str;
+	unsigned int			count;
+	struct nlist_64			*el;
+	struct symtab_command	*symbol_tab;
+
+	count = 0;
+	symbol_tab = get_symbol_table_64(load_command);
+	el = get_elem_list_64(header, symbol_tab);
+	str = get_symbol_offset_64(header, symbol_tab);
+	browse_symtab(symbol_tab, el, str, fileinfo);
+	return ;
+	(void)fileinfo;
+}
+
+int		handle_64(t_binary *fileinfo)
 {
 	unsigned int			count;
 	struct mach_header_64	*header;
 	struct load_command		*load_command;
 
 	count = 0;
-	header = get_header_64(fileinfo.ptr);
-	if (header == NULL)
-	{
-		ft_putendl_fd("error: can't found binary header, abort", STDERR_FILENO);
-		return (ERROR);
-	}
-
-	load_command = get_load_command_64(header);
-	if (load_command == NULL)
-	{
-		ft_putendl_fd("error: can't found header metadata, abort", STDERR_FILENO);
-		return (ERROR);
-	}
-
+	fileinfo->offset = 0;
+	header = get_header_64(fileinfo->ptr);
+	load_command = get_load_command_64(header, fileinfo);
 	while (count++ < header->ncmds)
 	{
-		if (load_command->cmd == LC_SEGMENT_64)
-			print_section_64(load_command);
+		/* if (load_command->cmd == LC_SEGMENT_64) */
+		/* 	print_section_64(load_command, &fileinfo); */
+
 		if (load_command->cmd == LC_SYMTAB)
 		{
 			print_symbol_64(load_command, header, fileinfo);
-			return (SUCCESS);
+			break;
 		}
-		load_command = next_load_command(load_command);
+		load_command = next_load_command(load_command, fileinfo);
 	}
+	print_data();
 	header = NULL;
 	load_command = NULL;
 	return (ERROR);

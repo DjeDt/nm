@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 12:41:13 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/09 16:48:24 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/15 18:37:02 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int		setup_struct(t_binary *fileinfo, const char *path)
 		ft_putendl_fd("error: can't allocate ressources to load given binary", STDERR_FILENO);
 		return (ERROR);
  	}
+	fileinfo->offset = 0;
 	return (SUCCESS);
 }
 
