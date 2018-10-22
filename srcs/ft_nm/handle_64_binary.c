@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 14:46:43 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/19 17:46:20 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/22 19:35:21 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,34 +97,58 @@ void	browse_symtab(struct symtab_command *symtab, struct nlist_64 *el, char *str
 		*/
 //		c = parse_symbol_elem2(el[count].n_type);
 
-		size_t type = el[count].n_type;
+		uint8_t type = el[count].n_type;
 		if ((type & N_TYPE) == N_UNDF)
 			c = 'U';
 		else if ((type & N_TYPE) == N_ABS)
 			c = 'A';
 		else if ((type & N_TYPE) == N_SECT)
 		{
+
 			struct mach_header_64		*header;
 			header = get_header_64(fileinfo->ptr);
 
 			struct load_command			*load_command;
 			load_command = get_load_command_64(header, fileinfo);
-
+			size_t count2 = 0;
+			while (count2++ < header->ncmds)
+			{
+				if (load_command->cmd == LC_SEGMENT_64)
+					break ;
+				load_command = next_load_command(load_command, fileinfo);
+			}
 			struct segment_command_64	*segment;
-			segment = get_segment_64(load_command);
+			segment = (struct segment_command_64*)get_segment_64(load_command);
 
-			struct section_64			*section;
-			section = (struct section_64*)&segment[el[count].n_sect];
+			struct section_64 *section;
+			section = (struct section_64*)segment + el[count].n_sect;
 
-			if (ft_strncmp(section->sectname, "__text", 6) == 0)
+			/* ft_putstr("section = "); */
+			/* ft_putendl(section->sectname); */
+			/* ft_putstr("segment = "); */
+			/* ft_putendl(section->segname); */
+			/* ft_putendl("---------"); */
+
+			if (ft_strcmp(section->sectname, "__TEXT") == 0)
 				c = 'T';
-			else if (ft_strncmp(section->sectname, "__data", 6) == 0)
+			else if (ft_strcmp(section->sectname, "__DATA") == 0)
 					c = 'D';
-			else if (ft_strncmp(section->sectname, "__bss", 5) == 0)
+			else if (ft_strcmp(section->sectname, "__BSS") == 0)
 				c = 'B';
 			else
 				c = 'S';
+
+			/* if (ft_strncmp(section->sectname, "__text", 6) == 0) */
+			/* 	c = 'T'; */
+			/* else if (ft_strncmp(section->sectname, "__data", 6) == 0) */
+			/* 		c = 'D'; */
+			/* else if (ft_strncmp(section->sectname, "__bss", 5) == 0) */
+			/* 	c = 'B'; */
+			/* else */
+			/* 	c = 'S'; */
 		}
+		else if ((type & N_TYPE) == NO_SECT || el[count].n_sect == NO_SECT)
+			ft_putendl("no sect");
 		else if ((type & N_TYPE) == N_PBUD)
 			c = 'U';
 		else if ((type & N_TYPE) == N_INDR)
@@ -144,18 +168,19 @@ void	browse_symtab(struct symtab_command *symtab, struct nlist_64 *el, char *str
 
 void	print_symbol_64(struct load_command *load_command, struct mach_header_64 *header, t_binary *fileinfo)
 {
-	char					*str;
-	unsigned int			count;
-	struct nlist_64			*el;
-	struct symtab_command	*symbol_tab;
 
-	count = 0;
+
+	struct symtab_command	*symbol_tab;
 	symbol_tab = get_symbol_table_64(load_command);
+
+	struct nlist_64			*el;
 	el = get_elem_list_64(header, symbol_tab);
+
+	char					*str;
 	str = get_symbol_offset_64(header, symbol_tab);
+
 	browse_symtab(symbol_tab, el, str, fileinfo);
 	return ;
-	(void)fileinfo;
 }
 
 int		handle_64(t_binary *fileinfo)
@@ -178,6 +203,8 @@ int		handle_64(t_binary *fileinfo)
 			print_symbol_64(load_command, header, fileinfo);
 			break;
 		}
+		/* fileinfo->offset += load_command->cmdsize; */
+		/* load_command = (void*)load_command + load_command->cmdsize; */
 		load_command = next_load_command(load_command, fileinfo);
 	}
 	print_data();

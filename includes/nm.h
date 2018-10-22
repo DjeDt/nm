@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/19 14:58:04 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/22 12:30:00 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,6 @@
 # define ERROR -1
 # define SUCCESS 0
 
-typedef struct				s_metadata
-{
-	void					*section_name;
-	void					*segment_name;
-	struct s_metadata		*next;
-}							t_metadata;
-
 typedef struct				s_sym
 {
 	char					sym_type;
@@ -53,7 +46,6 @@ typedef struct				t_binary
 
 # define HEX "0123456789abcdef"
 
-t_metadata *metadata;
 t_sym *sym;
 
 /* main struct */
@@ -70,6 +62,8 @@ int							handle_specific_32(t_binary fileinfo);
 
 /* utils */
 void						ft_puthex(unsigned long l);
+int							check_offset();
+
 
 /* lib */
 unsigned int				get_magic_number(void *data_file);

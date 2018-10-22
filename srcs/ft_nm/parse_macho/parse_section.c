@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 19:47:54 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/15 19:55:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/22 14:09:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ struct section_64			*get_section_64(struct segment_command_64 *segment)
 	section = NULL;
 	if (segment != NULL)
 	{
-		section = (struct section_64*)((char*)segment + sizeof(*segment));
+		section = (struct section_64*)segment + sizeof(*segment);
 		return (section);
 	}
 	return (NULL);
@@ -70,6 +70,6 @@ struct section_64			*get_section_64(struct segment_command_64 *segment)
 struct section_64			*get_next_section_64(struct section_64 *section)
 {
 	if (section != NULL)
-		section = (struct section_64*)((char*)section + sizeof(*section));
+		section = (struct section_64*)section + sizeof(*section);
 	return (section);
 }
