@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 19:47:54 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/22 14:09:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/23 19:41:16 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,35 @@ struct section_64			*get_specific_section_64(struct segment_command_64 *segment,
 		}
 	}
 	return (NULL);
+}
+
+char						search_specific_section_64(t_segment_64 *seg_list, uint8_t offset)
+{
+	uint8_t				count;
+	struct section_64	*section;
+
+	section = NULL;
+	while (seg_list != NULL)
+	{
+		count = 0;
+		section = get_section_64(seg_list->segment);
+		while (++count < seg_list->segment->nsects)
+		{
+			if (count == offset)
+			{
+				if (ft_strcmp(section->sectname, "__text") == 0)
+					return ('T');
+				else if (ft_strcmp(section->sectname, "__data") == 0)
+					return ('D');
+				else if (ft_strcmp(section->sectname, "__bss") == 0)
+					return('B');
+			}
+			count++;
+			section = get_next_section_64(section);
+		}
+		seg_list = seg_list->next;
+	}
+	return ('S');
 }
 
 void						print_section_64_info(struct section_64 *section, unsigned int *offset, t_binary *fileinfo)
@@ -61,7 +90,7 @@ struct section_64			*get_section_64(struct segment_command_64 *segment)
 	section = NULL;
 	if (segment != NULL)
 	{
-		section = (struct section_64*)segment + sizeof(*segment);
+		section = (struct section_64*)((char*)segment + sizeof(*segment));
 		return (section);
 	}
 	return (NULL);
@@ -70,6 +99,7 @@ struct section_64			*get_section_64(struct segment_command_64 *segment)
 struct section_64			*get_next_section_64(struct section_64 *section)
 {
 	if (section != NULL)
-		section = (struct section_64*)section + sizeof(*section);
+		section = (struct section_64*)((char*)section + sizeof(*section));
+
 	return (section);
 }

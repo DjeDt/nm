@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/22 12:30:00 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/23 19:20:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,19 @@ typedef struct				s_sym
 	unsigned long			sym_value;
 	struct s_sym			*next;
 }							t_sym;
+
+typedef struct				s_symbol_64
+{
+	struct symtab_command	*symtab;
+	struct nlist_64			*el;
+	char					*str;
+}							t_symbol_64;
+
+typedef struct				s_segment_64
+{
+	struct segment_command_64		*segment;
+	struct s_segment_64		*next;
+}							t_segment_64;
 
 typedef struct				t_binary
 {
@@ -86,9 +99,19 @@ void						print_segment_64_info(struct segment_command_64 *segment, void *ptr, u
 struct section_64			*get_section_64(struct segment_command_64 *segment);
 struct section_64			*get_next_section_64(struct section_64 *section);
 struct section_64			*get_specific_section_64(struct segment_command_64 *segment, const char *needle);
+char                        search_specific_section_64(t_segment_64 *segment, uint8_t offset);
+
 void                        print_section_64_info(struct section_64 *section, unsigned int *offset, t_binary *fileinfo);
 
 char                        parse_symbol_elem(struct nlist_64 el);
 char                        parse_symbol_elem2(uint8_t type);
+
+/*
+** list func
+*/
+
+void						print_data(void);
+void						push_chunk(t_sym *new, t_sym **head, int sort_func(const char *s1 ,const char *s2));
+t_sym						*new_chunk(void *sym_name, unsigned long sym_value, char type);
 
 #endif

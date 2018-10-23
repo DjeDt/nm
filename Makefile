@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/22 12:29:40 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/23 12:24:59 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -55,6 +55,7 @@ SRCS_NM 	=								\
 			$(DIR_NM)/handle_32_binary.c	\
 			$(DIR_NM)/check_offset.c		\
 			$(DIR_NM)/utils.c				\
+			$(DIR_NM)/store_data.c			\
 			$(LIB_NM)/parse_header.c		\
 			$(LIB_NM)/parse_load_command.c	\
 			$(LIB_NM)/parse_section.c		\
