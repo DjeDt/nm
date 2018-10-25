@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/23 12:24:59 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/25 20:12:18 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -50,6 +50,7 @@ LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
 # Sources #
 SRCS_NM 	=								\
 			$(DIR_NM)/main.c				\
+			$(DIR_NM)/handle_x64.c			\
 			$(DIR_NM)/setup_struct.c		\
 			$(DIR_NM)/handle_64_binary.c	\
 			$(DIR_NM)/handle_32_binary.c	\
@@ -59,8 +60,10 @@ SRCS_NM 	=								\
 			$(LIB_NM)/parse_header.c		\
 			$(LIB_NM)/parse_load_command.c	\
 			$(LIB_NM)/parse_section.c		\
+			$(LIB_NM)/parse_section_32.c	\
+			$(LIB_NM)/parse_segment.c		\
 			$(LIB_NM)/parse_symbol_table.c	\
-			$(LIB_NM)/parse_segment.c
+			$(LIB_NM)/parse_symbol_table_32.c
 
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)

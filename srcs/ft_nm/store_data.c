@@ -6,13 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/23 12:23:09 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/23 12:23:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:58:33 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-void	print_data(void)
+void	print_data_64(void)
 {
 	t_sym *tmp;
 
@@ -23,6 +23,21 @@ void	print_data(void)
 			printf("%16s %c %s\n", "", tmp->sym_type, tmp->sym_name);
 		else
 			printf("%016lx %c %s\n", tmp->sym_value, tmp->sym_type, tmp->sym_name);
+		tmp = tmp->next;
+	}
+}
+
+void	print_data_32(void)
+{
+	t_sym *tmp;
+
+	tmp = sym;
+	while (tmp != NULL)
+	{
+		if (tmp->sym_value == 0)
+			printf("%8s %c %s\n", "", tmp->sym_type, tmp->sym_name);
+		else
+			printf("%08lx %c %s\n", tmp->sym_value, tmp->sym_type, tmp->sym_name);
 		tmp = tmp->next;
 	}
 }

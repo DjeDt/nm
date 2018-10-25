@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 19:45:56 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/22 14:37:43 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:33:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ struct load_command	*get_load_command_64(struct mach_header_64 *header, t_binary
 	load_command = NULL;
 	if (header != NULL)
 	{
-//		load_command = (struct load_command*)&header[1];
 		fileinfo->offset += sizeof(*header);
 		load_command = (void*)header + sizeof(*header);
 		return (load_command);

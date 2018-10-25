@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 20:57:09 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/18 17:13:42 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:44:28 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,19 @@ struct nlist_64			*next_elem_list_64(struct nlist_64 *el)
 }
 
 struct symtab_command	*get_symbol_table_64(struct load_command *load_command)
+{
+	struct symtab_command	*symbols;
+
+	symbols = NULL;
+	if (load_command != NULL)
+	{
+		symbols = (struct symtab_command*)load_command;
+		return (symbols);
+	}
+	return (NULL);
+}
+
+struct symtab_command	*get_symbol_table(struct load_command *load_command)
 {
 	struct symtab_command	*symbols;
 

@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 14:46:43 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/23 19:46:36 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/25 19:15:53 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,11 @@ void	browse_symtab(t_symbol_64 symbol, t_segment_64 *seg_list, t_binary *fileinf
 	count = 0;
 	while (count < symbol.symtab->nsyms)
 	{
+		c = '?';
 		type = symbol.el[count].n_type;
-		if ((type & N_TYPE) == N_UNDF)
+		if (type & N_STAB)
+			c = '-';
+		else if ((type & N_TYPE) == N_UNDF)
 			c = 'U';
 		else if ((type & N_TYPE) == N_ABS)
 			c = 'A';
@@ -40,7 +43,7 @@ void	browse_symtab(t_symbol_64 symbol, t_segment_64 *seg_list, t_binary *fileinf
 			c = 'U';
 		else if ((type & N_TYPE) == N_INDR)
 			c = 'I';
-		if (!(type & N_EXT))
+		if (!(type & N_EXT) && type != '?')
 			c = ft_tolower(c);
 		if (symbol.el[count].n_value == 0)
 			new = new_chunk(symbol.str + symbol.el[count].n_un.n_strx, 0, c);
@@ -57,7 +60,7 @@ void	print_symbol_64(struct load_command *load_command, struct mach_header_64 *h
 	t_symbol_64		symbol;
 
 
-	symbol.symtab = get_symbol_table_64(load_command);
+	symbol.symtab = get_symbol_table(load_command);
 	symbol.el = get_elem_list_64(header, symbol.symtab);
 	symbol.str = get_symbol_offset_64(header, symbol.symtab);
 	browse_symtab(symbol, seg_list, fileinfo);
@@ -106,6 +109,7 @@ int		handle_64(t_binary *fileinfo)
 	load_command = get_load_command_64(header, fileinfo);
 	while (count++ < header->ncmds)
 	{
+		load_command = next_load_command(load_command, fileinfo);
 		if (load_command->cmd == LC_SEGMENT_64)
 			push_this_segment(load_command, &seg_list);
 		if (load_command->cmd == LC_SYMTAB)
@@ -113,9 +117,8 @@ int		handle_64(t_binary *fileinfo)
 			print_symbol_64(load_command, header, fileinfo, seg_list);
 			break;
 		}
-		load_command = next_load_command(load_command, fileinfo);
 	}
-	print_data();
+	print_data_64();
 	header = NULL;
 	load_command = NULL;
 	return (SUCCESS);
