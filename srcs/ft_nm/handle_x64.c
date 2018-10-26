@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 15:49:08 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 16:08:15 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,103 +107,6 @@ void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
 		push_section_chunk_x64(section, &bin->sect);
 		seg_offset += sizeof(*section);
 	}
-}
-
-void	push_symbol_chunk(t_symbol *new, t_symbol **symbol)
-{
-	t_symbol *tmp;
-
-	if (!new)
-		return ;
-	if ((*symbol) == NULL || ft_strcmp((*symbol)->name, new->name) >= 0)
-	{
-		new->next = (*symbol);
-		(*symbol) = new;
-	}
-	else
-	{
-		tmp = (*symbol);
-		while (tmp->next != NULL && ft_strcmp(tmp->next->name, new->name) < 0)
-			tmp = tmp->next;
-		new->next = tmp->next;
-		tmp->next = new;
-	}
-}
-
-//char	resolve_type_from_section(struct nlist_64 *list, t_binary *bin)
-char	resolve_type_from_section(uint32_t n_sect, t_binary *bin)
-{
-	uint32_t	count;
-	t_section	*sect;
-
-	count = 0;
-	sect = bin->sect;
-	while (sect != NULL && ++count != n_sect)
-		sect = sect->next;
-	if (ft_strcmp(sect->sectname, SECT_TEXT) == 0)
-		return ('T');
-	else if (ft_strcmp(sect->sectname, SECT_DATA) == 0)
-		return ('D');
-	else if (ft_strcmp(sect->sectname, SECT_BSS) == 0)
-		return ('B');
-	return ('S');
-}
-
-//char	resolve_symbol_type(struct nlist_64 *list, t_binary *bin)
-char	resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin)
-{
-	char	c;
-	uint8_t	type;
-
-/*	c = '?';
-	type = list->n_type & N_TYPE;
-	if (list->n_type & N_STAB)
-		c = '-';
-	else if (type == N_UNDF)
-		c = 'U';
-	else if (type == N_ABS)
-		c = 'A';
-	else if (type == N_SECT)
-		c = resolve_type_from_section(list, bin);
-	else if (type == N_PBUD)
-		type = 'U';
-	else if (type == N_INDR)
-		c = 'I';
-	if (!(list->n_type & N_EXT) && (list->n_type != '?'))
-		c = ft_tolower(c);
-*/
-	type = n_type & N_TYPE;
-	if (n_type & N_STAB)
-		c = '-';
-	else if (type == N_UNDF)
-		c = 'U';
-	else if (type == N_ABS)
-		c = 'A';
-	else if (type == N_SECT)
-		c = resolve_type_from_section(n_sect, bin);
-	else if (type == N_PBUD)
-		type = 'U';
-	else if (type == N_INDR)
-		c = 'I';
-	if (!(n_type & N_EXT) && (c != '?')) /*c || ntype ? */
-		c = ft_tolower(c);
-	return(c);
-}
-
-void	parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsigned int offset, t_binary *bin)
-{
-	t_symbol *new;
-
-	if (!(new = malloc((sizeof(char) * sizeof(t_symbol)))))
-		return ;
-
-	//	new->type = resolve_symbol_type(list, bin);
-	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	new->fileoff = offset;
-	new->value = list->n_value;
-	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
-	new->next = NULL;
-	push_symbol_chunk(new, &bin->sym);
 }
 
 void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)

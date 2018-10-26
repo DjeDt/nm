@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 15:46:18 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 16:13:03 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void		print_symbol_x32(t_symbol *symbol)
 	while (tmp != NULL)
 	{
 		if (tmp->value != 0)
-			ft_printf("%08llx %c %s\n", tmp->value, tmp->type, tmp->name);
+			ft_printf("%08lx %c %s\n", (uint32_t)tmp->value, tmp->type, tmp->name);
 		else
-			ft_printf("%8s %c %s\n", "", tmp->type, tmp->name);
+			ft_printf("%8s %c %s\n", "", (uint32_t)tmp->type, tmp->name);
 		tmp = tmp->next;
 	}
 }
@@ -75,20 +75,6 @@ void	parse_segment_x32(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-void	parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigned int offset, t_binary *bin)
-{
-	t_symbol *new;
-
-	if (!(new = (t_symbol*)malloc(sizeof(char*) * sizeof(t_symbol))))
-		return ;
-	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	new->fileoff = offset;
-	new->value = list->n_value;
-	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
-	new->next = NULL;
-	push_symbol_chunk(new, &bin->sym);
-}
-
 void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)
 {
 	uint32_t				count;
@@ -128,7 +114,6 @@ int		handle_x32(t_binary *bin)
 			parse_load_command_x32(bin, lc_offset);
 		lc_offset += load_command->cmdsize;
 	}
-//	print_section(bin->sect);
 	print_symbol_x32(bin->sym);
 	return (SUCCESS);
 }

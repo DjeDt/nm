@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+char *str = "globale";
+
 int main(int ac, char **av)
 {
 	char *c;
@@ -14,6 +16,7 @@ int main(int ac, char **av)
 	c = malloc(len);
 	strncpy(c, av[1], len);
 	printf("prog: %s -> %s\n", av[0], c);
+	printf("%s\n", str);
 	free(c);
 	return (0);
 }
