@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/25 23:04:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 14:37:02 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,43 @@ void print_section(t_section *section)
 	tmp = section;
 	while (tmp != NULL)
 	{
-		printf("segname = %s\nsectname = %s\naddr = %llu\noffset = %u\nsize = %u\n\n",
+		ft_printf("segname = %s\nsectname = %s\naddr = %llu\noffset = %u\nsize = %u\n\n",
 			   tmp->segname , \
 			   tmp->sectname, \
 			   tmp->addr, \
 			   tmp->offset, \
 			   tmp->size);
+		tmp = tmp->next;
+	}
+}
+
+void	print_symbol(t_symbol *symbol)
+{
+	t_symbol *tmp;
+
+	tmp = symbol;
+	while (tmp)
+	{
+		ft_printf("name: %s\ntype: %c\noffset: %u\nvalue: %llu\n",
+			   tmp->name,\
+			   tmp->type,\
+			   tmp->fileoff,\
+			   tmp->value);
+		tmp = tmp->next;
+	}
+}
+
+void	print_symbol_x64(t_symbol *symbol)
+{
+	t_symbol *tmp;
+
+	tmp = symbol;
+	while (tmp != NULL)
+	{
+		if (tmp->value != 0)
+			ft_printf("%016llx %c %s\n", tmp->value, tmp->type, tmp->name);
+		else
+			ft_printf("%16s %c %s\n", "", tmp->type, tmp->name);
 		tmp = tmp->next;
 	}
 }
@@ -78,42 +109,26 @@ void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-/* t_symbol	*create_symbol_chunk(struct nlist_64 *symbol, uint32_t sym_offset) */
-/* { */
-/* 	t_symbol *new; */
+void	push_symbol_chunk(t_symbol *new, t_symbol **symbol)
+{
+	t_symbol *tmp;
 
-/* 	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol)))) */
-/* 		return (NULL); */
-/* 	new->sect = symbol->n_sect; */
-/* 	new->type = symbol->n_type; */
-/* 	new->fileoff = sym_offset; */
-/* 	new->value = symbol->n_value; */
-/* 	new->next = NULL; */
-/* 	return (new); */
-/* } */
-
-/* void	push_symbol_chunk(struct nlist_64 *chunk, t_symbol **symbol, uint32_t sym_offset) */
-/* { */
-/* 	t_symbol *tmp; */
-/* 	t_symbol *new; */
-
-/* 	if (!chunk) */
-/* 		return ; */
-/* 	new = create_symbol_chunk(chunk, sym_offset); */
-/* 	if (*symbol == NULL || ft_strcmp((*symbol)->sym_name, new->sym_name)) */
-/* 	{ */
-/* 		new->next = (*symbol); */
-/* 		(*symbol) = new; */
-/* 	} */
-/* 	else */
-/* 	{ */
-/* 		tmp = (*symbol); */
-/* 		while (tmp->next != NULL && ft_strcmp(tmp->next->sym_name, new->sym_name) < 0) */
-/* 			tmp = tmp->next; */
-/* 		new->next = tmp->next; */
-/* 		tmp->next = new; */
-/* 	} */
-/* } */
+	if (!new)
+		return ;
+	if ((*symbol) == NULL || ft_strcmp((*symbol)->name, new->name) >= 0)
+	{
+		new->next = (*symbol);
+		(*symbol) = new;
+	}
+	else
+	{
+		tmp = (*symbol);
+		while (tmp->next != NULL && ft_strcmp(tmp->next->name, new->name) < 0)
+			tmp = tmp->next;
+		new->next = tmp->next;
+		tmp->next = new;
+	}
+}
 
 char	resolve_type_from_section(struct nlist_64 *list, t_binary *bin)
 {
@@ -124,9 +139,8 @@ char	resolve_type_from_section(struct nlist_64 *list, t_binary *bin)
 	sect = bin->sect;
 	while (sect != NULL && ++count != list->n_sect)
 		sect = sect->next;
-
 	if (ft_strcmp(sect->sectname, SECT_TEXT) == 0)
-		return ('t');
+		return ('T');
 	else if (ft_strcmp(sect->sectname, SECT_DATA) == 0)
 		return ('D');
 	else if (ft_strcmp(sect->sectname, SECT_BSS) == 0)
@@ -134,13 +148,12 @@ char	resolve_type_from_section(struct nlist_64 *list, t_binary *bin)
 	return ('S');
 }
 
-char	resolve_symbol_type(struct nlist_64 *list, unsigned int sym_offset, t_binary *bin)
+char	resolve_symbol_type(struct nlist_64 *list, t_binary *bin)
 {
 	char	c;
 	uint8_t	type;
 
 	c = '?';
-	(void)sym_offset;
 	type = list->n_type & N_TYPE;
 	if (list->n_type & N_STAB)
 		c = '-';
@@ -154,22 +167,23 @@ char	resolve_symbol_type(struct nlist_64 *list, unsigned int sym_offset, t_binar
 		type = 'U';
 	else if (type == N_INDR)
 		c = 'I';
-	if (!(list->n_type & N_EXT) && list->n_type != '?')
+	if (!(list->n_type & N_EXT) && (list->n_type != '?'))
 		c = ft_tolower(c);
 	return(c);
 }
 
-void	parse_symbol_x64(struct nlist_64 *list, unsigned int sym_offset, t_binary *bin)
+void	parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsigned int offset, t_binary *bin)
 {
 	t_symbol *new;
 
-	ft_putendl("test");
 	if (!(new = malloc((sizeof(char) * sizeof(t_symbol)))))
 		return ;
-	new->type = resolve_symbol_type(list, sym_offset, bin);
-	new->name = bin->ptr + sym_offset;
-	printf("%c %s\n", new->type, new->name);
-
+	new->type = resolve_symbol_type(list, bin);
+	new->fileoff = offset;
+	new->value = list->n_value;
+	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
+	new->next = NULL;
+	push_symbol_chunk(new, &bin->sym);
 }
 
 void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
@@ -181,16 +195,13 @@ void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
 
 	count = -1;
 	symtab = (struct symtab_command*)((char*)bin->ptr + lc_offset);
-	sym_offset = symtab->symoff + sizeof(*symtab);
+	sym_offset = symtab->symoff;
 	while (++count < symtab->nsyms)
 	{
-		if ((list->n_type & N_STAB) == 0)
-		{
-			list = (struct nlist_64*)((char*)bin->ptr + sym_offset);
-			parse_symbol_x64(list, sym_offset, bin);
-//			push_symbol_chunk(list, &bin->sym, sym_offset);
-			sym_offset += sizeof(*list);
-		}
+		list = (void*)bin->ptr + sym_offset;
+		if (!(list->n_type & N_STAB))
+			parse_symbol_x64(symtab, list, sym_offset, bin);
+		sym_offset += sizeof(*list);
 	}
 }
 
@@ -198,26 +209,24 @@ int		handle_x64(t_binary *bin)
 {
 	uint32_t				count;
 	struct mach_header_64	*header;
-
 	unsigned int			lc_offset;
 	struct load_command		*load_command;
 
 	count = -1;
 	header = (struct mach_header_64*)bin->ptr;
 	bin->offset = sizeof(*header);
-	load_command = (struct load_command*)((char*)header + bin->offset);
 	lc_offset = bin->offset;
 	while (++count < header->ncmds)
 	{
-		load_command = (void*)bin->ptr + lc_offset;
-//		load_command = (struct load_command*)((char*)bin->ptr + lc_offset);
-
+		load_command = (struct load_command*)((char*)bin->ptr + lc_offset);
 		if (load_command->cmd == LC_SEGMENT_64)
 			parse_segment_x64(bin, lc_offset);
 		else if (load_command->cmd == LC_SYMTAB)
 			parse_load_command_x64(bin, lc_offset);
 		lc_offset += load_command->cmdsize;
 	}
-	print_section(bin->sect);
+	print_symbol_x64(bin->sym);
+//	print_section(bin->sect);
+//	print_symbol(bin->sym);
 	return (SUCCESS);
 }

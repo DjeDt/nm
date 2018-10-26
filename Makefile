@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/25 20:12:18 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/26 14:28:07 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,6 +23,7 @@ ADDFLAGS	= #-O1 -g3 -fsanitize=address -fno-omit-frame-pointer -Wpadded
 OBJ_PATH	= obj
 SRC_PATH	= srcs
 LIB_PATH	= libft
+PRINTF_PATH	= ft_printf
 INC_PATH	= includes/
 
 # Sub_dirs #
@@ -43,28 +44,15 @@ COUNT		= 1
 
 # libraries #
 LIBFT		= -L $(LIB_PATH)
-LIBS		= $(LIBFT) -lft
-INCLUDES	= -I./ -I $(LIB_PATH)/$(INC_PATH) -I $(INC_PATH)
-LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
+PRINTF		= -L $(PRINTF_PATH)
+LIBS		= $(LIBFT) -lft $(PRINTF) -lftprintf
+INCLUDES	= -I $(LIB_PATH)/$(INC_PATH) -I $(INC_PATH) -I $(PRINTF_PATH)/$(INC_PATH)
 
 # Sources #
 SRCS_NM 	=								\
 			$(DIR_NM)/main.c				\
-			$(DIR_NM)/handle_x64.c			\
 			$(DIR_NM)/setup_struct.c		\
-			$(DIR_NM)/handle_64_binary.c	\
-			$(DIR_NM)/handle_32_binary.c	\
-			$(DIR_NM)/check_offset.c		\
-			$(DIR_NM)/utils.c				\
-			$(DIR_NM)/store_data.c			\
-			$(LIB_NM)/parse_header.c		\
-			$(LIB_NM)/parse_load_command.c	\
-			$(LIB_NM)/parse_section.c		\
-			$(LIB_NM)/parse_section_32.c	\
-			$(LIB_NM)/parse_segment.c		\
-			$(LIB_NM)/parse_symbol_table.c	\
-			$(LIB_NM)/parse_symbol_table_32.c
-
+			$(DIR_NM)/handle_x64.c
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 SRC_NM = $(addprefix $(SRC_PATH)/,$(SRCS_NM))
@@ -98,7 +86,7 @@ test:
 
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)
-	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS) $(LIBPRINTF)
+	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_nm is ready to works\n$(END_COL)"
 
 $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
@@ -115,7 +103,7 @@ $(FT_OTOOL): $(OBJ_OTOOL)
 $(OBJ_OTOOL): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) -o $@ $(FLAGS) $(ADD_FLAGS) $(INCLUDES) -c $<
-	@printf "\r\033[K$(RED)[%-5.2f%%]  \e[1;38;5;148m[$@] -> [$<]$(END_COL)" $(PERCENT_CLI)
+	@printf "\r\033[K$(RED)[%-5.2f%%]  \e[1;38;5;148m[$@] -> a[$<]$(END_COL)" $(PERCENT_CLI)
 	$(eval COUNT_C=$(shell echo $$(($(COUNT_C)+1))))
 
 clean:
