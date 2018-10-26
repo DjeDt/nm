@@ -67,10 +67,7 @@ void	parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigne
 	if (!(new = (t_symbol*)malloc(sizeof(char*) * sizeof(t_symbol))))
 		return ;
 	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	(void)list;
-	(void)symtab;
-	(void)offset;
-	(void)bin;
+	
 }
 
 void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)

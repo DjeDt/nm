@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 14:33:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 15:40:15 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,16 @@ int							clean_struct(t_binary *fileinfo, struct stat stat);
 /* t_sym						*new_chunk(void *sym_name, unsigned long sym_value, char type); */
 
 /* -------------------------*/
+/* x64 */
 int		handle_x64(t_binary *bin);
+//void	print_section(t_section *section);
+
+/* x32 */
+int		handle_x32(t_binary *bin);
+
+/* utils */
+char	resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin);
+
+
 
 #endif

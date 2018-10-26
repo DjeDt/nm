@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 13:54:15 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 14:44:11 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int		handle_arch(t_binary bin)
 	else if (magic_number == MH_CIGAM_64)
 		ft_putendl("ret = handle_endian_x64(&bin);");
 	else if (magic_number == MH_MAGIC)			/* 32-bits architecture */
-		ft_putendl("ret = handle_x32(&bin);");				/* big endian */
+		ret = handle_x32(&bin);				/* big endian */
 	else if (magic_number == MH_CIGAM)
 		ft_putendl("ret = handle_endian_x32(&bin);");		/* little endian */
 	else										/* binaire inconnu */
