@@ -6,11 +6,26 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 15:39:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 15:46:18 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
+
+void		print_symbol_x32(t_symbol *symbol)
+{
+	t_symbol *tmp;
+
+	tmp = symbol;
+	while (tmp != NULL)
+	{
+		if (tmp->value != 0)
+			ft_printf("%08llx %c %s\n", tmp->value, tmp->type, tmp->name);
+		else
+			ft_printf("%8s %c %s\n", "", tmp->type, tmp->name);
+		tmp = tmp->next;
+	}
+}
 
 t_section	*create_section_chunk_x32(struct section *section)
 {
@@ -67,10 +82,11 @@ void	parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigne
 	if (!(new = (t_symbol*)malloc(sizeof(char*) * sizeof(t_symbol))))
 		return ;
 	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	(void)list;
-	(void)symtab;
-	(void)offset;
-	(void)bin;
+	new->fileoff = offset;
+	new->value = list->n_value;
+	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
+	new->next = NULL;
+	push_symbol_chunk(new, &bin->sym);
 }
 
 void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)
@@ -113,5 +129,6 @@ int		handle_x32(t_binary *bin)
 		lc_offset += load_command->cmdsize;
 	}
 //	print_section(bin->sect);
+	print_symbol_x32(bin->sym);
 	return (SUCCESS);
 }

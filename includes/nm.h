@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 15:40:15 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/26 15:43:30 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int		handle_x32(t_binary *bin);
 
 /* utils */
 char	resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin);
-
+void    push_symbol_chunk(t_symbol *new, t_symbol **symbol);
 
 
 #endif
