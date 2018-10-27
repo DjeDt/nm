@@ -6,13 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 12:11:47 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 12:15:47 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-void		print_symbol_x32(t_symbol *symbol)
+static void	print_symbol_x32(t_symbol *symbol)
 {
 	t_symbol *tmp;
 
@@ -22,12 +22,12 @@ void		print_symbol_x32(t_symbol *symbol)
 		if (tmp->value != 0)
 			ft_printf("%08lx %c %s\n", (uint32_t)tmp->value, tmp->type, tmp->name);
 		else
-			ft_printf("%8s %c %s\n", "", (uint32_t)tmp->type, tmp->name);
+			ft_printf("%8s %c %s\n", "", tmp->type, tmp->name);
 		tmp = tmp->next;
 	}
 }
 
-void	parse_segment_x32(t_binary *bin, unsigned int lc_offset)
+static void	parse_segment_x32(t_binary *bin, unsigned int lc_offset)
 {
 	uint32_t				count;
 	unsigned int			seg_offset;
@@ -45,7 +45,7 @@ void	parse_segment_x32(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)
+static void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)
 {
 	uint32_t				count;
 	unsigned int			sym_offset;
@@ -64,7 +64,7 @@ void	parse_load_command_x32(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-int		handle_x32(t_binary *bin)
+int			handle_x32(t_binary *bin)
 {
 	uint32_t			count;
 	struct mach_header	*header;

@@ -6,61 +6,89 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 12:41:13 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/25 21:27:24 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 15:01:23 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "nm.h"
 
-int		check_input(struct stat input)
+void	free_sect(t_section **section)
 {
-	/* refaire le check input */
-	if (input.st_mode & S_IFDIR)
+	t_section	**tmp;
+	t_section	*nxt;
+
+	tmp = section;
+	nxt = NULL;
+	while (*tmp != NULL)
 	{
-		ft_putendl_fd("error: file is a directory", STDERR_FILENO);
-		return (ERROR);
+		nxt = (*section)->next;
+		free(*tmp);
+		(*tmp) = nxt;
 	}
-	if (input.st_mode & S_IRUSR)
+	/* tmp = (*section); */
+	/* while (tmp != NULL) */
+	/* { */
+	/* 	nxt = tmp->next; */
+	/* 	free(tmp); */
+	/* 	tmp = nxt; */
+	/* } */
+}
+
+void	free_sym(t_symbol **symbol)
+{
+	t_symbol	**tmp;
+	t_symbol	*nxt;
+
+	tmp = symbol;
+	nxt = NULL;
+	while ((*tmp) != NULL)
 	{
-		ft_putendl_fd("test", STDERR_FILENO);
-		return (ERROR);
+		nxt = (*tmp)->next;
+		free(*tmp);
+		(*tmp) = nxt;
 	}
-	return (SUCCESS);
+	/* tmp = (*symbol); */
+	/* while (tmp != NULL) */
+	/* { */
+	/* 	nxt = tmp->next; */
+	/* 	free(tmp); */
+	/* 	tmp = nxt; */
+	/* } */
+}
+
+void	setup_struct_value(t_binary *bin)
+{
+	bin->offset = 0;
+	bin->sym = NULL;
+	bin->sect = NULL;
 }
 
 int		setup_struct(t_binary *bin, const char *path, int fd, struct stat *stat)
 {
 	if ((fd = open(path, O_RDONLY)) == -1)
-	{
-		ft_putendl_fd("error: wrong input", STDERR_FILENO);
-		return (ERROR);
-	}
+		return (handle_error(path, NOT_ALLOWED, ERR_DIR_NA));
 	if ((fstat(fd, stat)) == -1)
-	{
-		ft_putendl_fd("error: fstat failed", STDERR_FILENO);
-		return (ERROR);
-	}
+		return (handle_error(path, FSTAT_ERR, FSTAT_ERR_STR));
+	if (stat->st_mode & S_IFDIR)
+		return (handle_error(path, IS_DIR, ERR_DIR_STR));
 	if ((bin->ptr = mmap(0, stat->st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-	{
-		ft_putendl_fd("error: can't allocate ressources to load given binary", STDERR_FILENO);
-		return (ERROR);
- 	}
-	bin->offset = 0;
-	bin->sym = NULL;
-	bin->sect = NULL;
+		return (handle_error(path, MMAP_ERR, MMAP_ERR_STR));
+	close(fd);
+	setup_struct_value(bin);
 	return (SUCCESS);
 }
 
-
-int		clean_struct(t_binary *bin, struct stat stat)
+int		clean_struct(t_binary *bin, const char *path, struct stat stat)
 {
 	if (bin->ptr != NULL)
 	{
 		if (munmap(bin->ptr, stat.st_size) != 0)
-		{
-			ft_putendl_fd("error: can't deallocate given binary", STDERR_FILENO);
-			return (ERROR);
-		}
+			handle_error(path, MUNMAP_ERR, MUNMAPP_ERR_STR);
 	}
+	if (bin->sym)
+		free_sym(&bin->sym);
+	if (bin->sect != NULL)
+		free_sect(&bin->sect);
+	sleep(15);
 	return (SUCCESS);
 }

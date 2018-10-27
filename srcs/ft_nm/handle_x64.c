@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 12:11:06 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 12:14:45 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-int		handle_x64(t_binary *bin)
+int			handle_x64(t_binary *bin)
 {
 	uint32_t				count;
 	struct mach_header_64	*header;
@@ -85,7 +85,5 @@ int		handle_x64(t_binary *bin)
 		lc_offset += load_command->cmdsize;
 	}
 	print_symbol_x64(bin->sym);
-//	print_section(bin->sect);
-//	print_symbol(bin->sym);
 	return (SUCCESS);
 }

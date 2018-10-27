@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 14:44:11 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 14:48:16 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int		handle_arch(t_binary bin)
 
 	magic_number = *(unsigned int*)bin.ptr;
 	if (magic_number == MH_MAGIC_64)			/* 64-bits architecture */
-		ret = handle_x64(&bin);//		ret = handle_64(&bin);				/* big endian */
+		ret = handle_x64(&bin);				//		ret = handle_64(&bin);				/* big endian */
 	else if (magic_number == MH_CIGAM_64)
 		ft_putendl("ret = handle_endian_x64(&bin);");
 	else if (magic_number == MH_MAGIC)			/* 32-bits architecture */
@@ -35,7 +35,7 @@ static int		handle_arch(t_binary bin)
 	return (ret);
 }
 
-static int		ft_nm(const char *input)
+static int		ft_nm(const char *path)
 {
 	int			fd;
 	int			ret;
@@ -43,12 +43,11 @@ static int		ft_nm(const char *input)
 	struct stat	stat;
 
 	fd = 0;
-	ret = setup_struct(&bin, input, fd, &stat);
-	close(fd);
+	ret = setup_struct(&bin, path, fd, &stat);
 	if (ret == SUCCESS)
 	{
 		ret = handle_arch(bin);
-		clean_struct(&bin, stat);
+		clean_struct(&bin, path, stat);
 	}
 	return (ret);
 }
