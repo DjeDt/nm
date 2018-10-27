@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 20:48:41 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 20:55:43 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ static int			ft_nm(t_binary *bin, char **av, int *count)
 	struct stat	stat;
 
 	setup_struct_values(bin);
+
 	if (handle_flags(bin, av, count) == ERROR)
 		return (ERROR);
 
@@ -79,7 +80,7 @@ int					main(int ac, char **av)
 		ret = ft_nm(&bin, av, &count);
 	else
 	{
-		while (av[count] != NULL)
+		while (av[count] != NULL && count < ac)
 		{
 			ret = ft_nm(&bin, av, &count);
 			count++;

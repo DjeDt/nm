@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 19:14:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 20:38:52 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 20:54:52 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,10 @@ static int	print_help(void)
 
 static int	handle_options(unsigned int *opt, char *input)
 {
-	if (*input != '-')
-		return (ERROR);
+	input++;
 	while ((*input) != '\0')
 	{
-		input++;
-		if (*input == '\0')
-			break ;
-		else if (*input == 'h')
+		if (*input == 'h')
 			return (print_help());
 		else if (*input == 'A')
 			set_option(opt, FLAG_A);
@@ -65,13 +61,14 @@ static int	handle_options(unsigned int *opt, char *input)
 			set_option(opt, FLAG_t);
 		else
 			return (handle_error("nm", FLAG_UKW, input));
+		input++;
 	}
 	return (SUCCESS);
 }
 
 int			handle_flags(t_binary *bin, char **av, int *count)
 {
-	while (av[(*count)] != NULL)
+	while (av[(*count)] != NULL && *av[(*count)] == '-')
 	{
 		if (handle_options(&bin->opt, av[(*count)]) == ERROR)
 			return (ERROR);
