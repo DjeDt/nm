@@ -6,11 +6,11 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 12:08:09 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 12:12:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 17:26:49 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "nm.h"
+#include "nm.h"
 
 static t_section	*create_section_chunk_x32(struct section *section)
 {
@@ -42,7 +42,7 @@ static t_section	*create_section_chunk_x64(struct section_64 *section)
 	return (new);
 }
 
-void	push_section_chunk_x32(struct section *chunk, t_section **section)
+void				push_section_chunk_x32(struct section *chunk, t_section **section)
 {
 	t_section *tmp;
 
@@ -57,7 +57,7 @@ void	push_section_chunk_x32(struct section *chunk, t_section **section)
 	}
 }
 
-void		push_section_chunk_x64(struct section_64 *chunk, t_section **section)
+void				push_section_chunk_x64(struct section_64 *chunk, t_section **section)
 {
 	t_section *tmp;
 

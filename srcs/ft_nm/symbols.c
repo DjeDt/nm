@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 16:07:49 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 16:09:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 15:29:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigne
 {
 	t_symbol *new;
 
-	if (!(new = (t_symbol*)malloc(sizeof(char*) * sizeof(t_symbol))))
+	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol))))
 		return ;
 	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
 	new->fileoff = offset;
@@ -51,7 +51,7 @@ void	parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsi
 {
 	t_symbol *new;
 
-	if (!(new = malloc((sizeof(char) * sizeof(t_symbol)))))
+	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol))))
 		return ;
 	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
 	new->fileoff = offset;

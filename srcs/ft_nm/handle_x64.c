@@ -6,17 +6,17 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 12:14:45 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 17:24:50 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "nm.h"
+#include "nm.h"
 
-static void	print_symbol_x64(t_symbol *symbol)
+static void	print_symbol_x64(t_symbol **symbol)
 {
 	t_symbol *tmp;
 
-	tmp = symbol;
+	tmp = *symbol;
 	while (tmp != NULL)
 	{
 		if (tmp->value != 0)
@@ -84,6 +84,6 @@ int			handle_x64(t_binary *bin)
 			parse_load_command_x64(bin, lc_offset);
 		lc_offset += load_command->cmdsize;
 	}
-	print_symbol_x64(bin->sym);
+	print_symbol_x64(&bin->sym);
 	return (SUCCESS);
 }

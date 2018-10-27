@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 *~
 hell
+ft_nm
+ft_otool

@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/27 12:33:22 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/27 19:15:50 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -16,7 +16,7 @@ FT_OTOOL		= ft_otool
 
 # compilation #
 CC			= gcc
-FLAGS		= -Wall -Wextra -Werror
+FLAGS		= -Wall -Wextra -Werror -g3
 ADDFLAGS	= #-O1 -g3 -fsanitize=address -fno-omit-frame-pointer -Wpadded
 
 # Directories #
@@ -57,6 +57,7 @@ SRCS_NM 	=								\
 			$(DIR_NM)/sections.c			\
 			$(DIR_NM)/resolve_symbol.c		\
 			$(DIR_NM)/symbols.c				\
+			$(DIR_NM)/handle_flags.c		\
 			$(DIR_NM)/errors.c
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
@@ -91,7 +92,7 @@ test:
 
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)
-	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS)
+	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) -framework Appkit $(OBJ_NM) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_nm is ready to works\n$(END_COL)"
 
 $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c

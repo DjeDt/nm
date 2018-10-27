@@ -6,89 +6,62 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 12:41:13 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 15:01:23 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 20:12:58 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "nm.h"
+#include "nm.h"
 
-void	free_sect(t_section **section)
+void	free_sect(t_section *section)
 {
-	t_section	**tmp;
-	t_section	*nxt;
+	t_section	*tmp;
 
-	tmp = section;
-	nxt = NULL;
-	while (*tmp != NULL)
+	while (section != NULL)
 	{
-		nxt = (*section)->next;
-		free(*tmp);
-		(*tmp) = nxt;
+		tmp = section->next;
+		free(section);
+		section = tmp;
 	}
-	/* tmp = (*section); */
-	/* while (tmp != NULL) */
-	/* { */
-	/* 	nxt = tmp->next; */
-	/* 	free(tmp); */
-	/* 	tmp = nxt; */
-	/* } */
 }
 
-void	free_sym(t_symbol **symbol)
+void	free_sym(t_symbol *symbol)
 {
-	t_symbol	**tmp;
-	t_symbol	*nxt;
+	t_symbol	*tmp;
 
-	tmp = symbol;
-	nxt = NULL;
-	while ((*tmp) != NULL)
+	while (symbol != NULL)
 	{
-		nxt = (*tmp)->next;
-		free(*tmp);
-		(*tmp) = nxt;
+		tmp = symbol->next;
+		free(symbol);
+		symbol = tmp;
 	}
-	/* tmp = (*symbol); */
-	/* while (tmp != NULL) */
-	/* { */
-	/* 	nxt = tmp->next; */
-	/* 	free(tmp); */
-	/* 	tmp = nxt; */
-	/* } */
 }
 
-void	setup_struct_value(t_binary *bin)
+int		setup_struct(t_binary *bin, struct stat *stat)
 {
-	bin->offset = 0;
-	bin->sym = NULL;
-	bin->sect = NULL;
-}
+	int fd;
 
-int		setup_struct(t_binary *bin, const char *path, int fd, struct stat *stat)
-{
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return (handle_error(path, NOT_ALLOWED, ERR_DIR_NA));
+	if ((fd = open(bin->path, O_RDONLY)) == -1)
+		return (handle_error(bin->path, NOT_ALLOWED, ERR_DIR_NA));
 	if ((fstat(fd, stat)) == -1)
-		return (handle_error(path, FSTAT_ERR, FSTAT_ERR_STR));
+		return (handle_error(bin->path, FSTAT_ERR, FSTAT_ERR_STR));
 	if (stat->st_mode & S_IFDIR)
-		return (handle_error(path, IS_DIR, ERR_DIR_STR));
+		return (handle_error(bin->path, IS_DIR, ERR_DIR_STR));
 	if ((bin->ptr = mmap(0, stat->st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-		return (handle_error(path, MMAP_ERR, MMAP_ERR_STR));
+		return (handle_error(bin->path, MMAP_ERR, MMAP_ERR_STR));
 	close(fd);
-	setup_struct_value(bin);
 	return (SUCCESS);
 }
 
-int		clean_struct(t_binary *bin, const char *path, struct stat stat)
+int		clean_struct(t_binary *bin, struct stat stat)
 {
+	if (bin->sym)
+		free_sym(bin->sym);
+	if (bin->sect != NULL)
+		free_sect(bin->sect);
 	if (bin->ptr != NULL)
 	{
 		if (munmap(bin->ptr, stat.st_size) != 0)
-			handle_error(path, MUNMAP_ERR, MUNMAPP_ERR_STR);
+			handle_error(bin->path, MUNMAP_ERR, MUNMAPP_ERR_STR);
 	}
-	if (bin->sym)
-		free_sym(&bin->sym);
-	if (bin->sect != NULL)
-		free_sect(&bin->sect);
-	sleep(15);
 	return (SUCCESS);
 }

@@ -6,20 +6,20 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 15:58:11 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 16:00:23 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 17:38:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-static char	resolve_type_from_section(uint32_t n_sect, t_binary *bin)
+static char		resolve_type_from_section(uint32_t n_sect, t_binary *bin)
 {
 	uint32_t	count;
 	t_section	*sect;
 
 	count = 0;
 	sect = bin->sect;
-	while (sect != NULL && ++count != n_sect)
+	while (sect != NULL && ++count < n_sect)
 		sect = sect->next;
 	if (ft_strcmp(sect->sectname, SECT_TEXT) == 0)
 		return ('T');
@@ -30,7 +30,7 @@ static char	resolve_type_from_section(uint32_t n_sect, t_binary *bin)
 	return ('S');
 }
 
-char	resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin)
+char			resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin)
 {
 	char	c;
 	uint8_t	type;
@@ -48,7 +48,7 @@ char	resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin)
 		type = 'U';
 	else if (type == N_INDR)
 		c = 'I';
-	if (!(n_type & N_EXT) && (c != '?')) /*c || ntype ? */
+	if (!(n_type & N_EXT) && (c != '?'))
 		c = ft_tolower(c);
-	return(c);
+	return (c);
 }
