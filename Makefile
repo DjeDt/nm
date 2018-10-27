@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/26 16:10:19 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/27 12:13:07 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -54,6 +54,7 @@ SRCS_NM 	=								\
 			$(DIR_NM)/setup_struct.c		\
 			$(DIR_NM)/handle_x64.c			\
 			$(DIR_NM)/handle_x32.c			\
+			$(DIR_NM)/sections.c			\
 			$(DIR_NM)/resolve_symbol.c		\
 			$(DIR_NM)/symbols.c
 

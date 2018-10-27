@@ -6,46 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 16:08:15 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 12:11:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "nm.h"
 
-void print_section(t_section *section)
-{
-	t_section *tmp;
-
-	tmp = section;
-	while (tmp != NULL)
-	{
-		ft_printf("segname = %s\nsectname = %s\naddr = %llu\noffset = %u\nsize = %u\n\n",
-			   tmp->segname , \
-			   tmp->sectname, \
-			   tmp->addr, \
-			   tmp->offset, \
-			   tmp->size);
-		tmp = tmp->next;
-	}
-}
-
-void	print_symbol(t_symbol *symbol)
-{
-	t_symbol *tmp;
-
-	tmp = symbol;
-	while (tmp)
-	{
-		ft_printf("name: %s\ntype: %c\noffset: %u\nvalue: %llu\n",
-			   tmp->name,\
-			   tmp->type,\
-			   tmp->fileoff,\
-			   tmp->value);
-		tmp = tmp->next;
-	}
-}
-
-void	print_symbol_x64(t_symbol *symbol)
+static void	print_symbol_x64(t_symbol *symbol)
 {
 	t_symbol *tmp;
 
@@ -60,37 +27,7 @@ void	print_symbol_x64(t_symbol *symbol)
 	}
 }
 
-t_section	*create_section_chunk_x64(struct section_64 *section)
-{
-	t_section *new;
-
-	if (!(new = (t_section*)malloc(sizeof(char) * sizeof(t_section))))
-		return (NULL);
-	new->segname = section->segname;
-	new->sectname = section->sectname;
-	new->addr = section->addr;
-	new->offset = section->offset;
-	new->size = section->size;
-	new->next = NULL;
-	return (new);
-}
-
-void		push_section_chunk_x64(struct section_64 *chunk, t_section **section)
-{
-	t_section *tmp;
-
-	if (*section == NULL)
-		(*section) = create_section_chunk_x64(chunk);
-	else
-	{
-		tmp = (*section);
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = create_section_chunk_x64(chunk);
-	}
-}
-
-void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
+static void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
 {
 	uint32_t					count;
 	unsigned int				seg_offset;
@@ -100,7 +37,6 @@ void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
 	count = -1;
 	segment = (struct segment_command_64*)((char*)bin->ptr + lc_offset);
 	seg_offset = lc_offset + sizeof(*segment);
-
 	while (++count < segment->nsects)
 	{
 		section = (struct section_64*)((char*)bin->ptr + seg_offset);
@@ -109,7 +45,7 @@ void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
+static void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
 {
 	uint32_t				count;
 	unsigned int			sym_offset;

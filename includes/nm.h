@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/26 16:12:34 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/27 12:12:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,12 @@ int							clean_struct(t_binary *fileinfo, struct stat stat);
 /* x64 */
 int							handle_x64(t_binary *bin);
 void						parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsigned int offset, t_binary *bin);
+void						push_section_chunk_x64(struct section_64 *chunk, t_section **section);
 
 /* x32 */
 int							handle_x32(t_binary *bin);
 void						parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigned int offset, t_binary *bin);
-
+void						push_section_chunk_x32(struct section *chunk, t_section **section);
 /* utils */
 char						resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin);
 
