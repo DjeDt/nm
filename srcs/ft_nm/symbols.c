@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 16:07:49 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 15:29:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/02 18:08:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	push_symbol_chunk(t_symbol *new, t_symbol **symbol)
 
 	if (!new)
 		return ;
-	if ((*symbol) == NULL || ft_strcmp((*symbol)->name, new->name) >= 0)
+	if ((*symbol) == NULL || ft_strcmp((*symbol)->name, new->name) > 0)
 	{
 		new->next = (*symbol);
 		(*symbol) = new;
@@ -26,7 +26,7 @@ static void	push_symbol_chunk(t_symbol *new, t_symbol **symbol)
 	else
 	{
 		tmp = (*symbol);
-		while (tmp->next != NULL && ft_strcmp(tmp->next->name, new->name) < 0)
+		while (tmp->next != NULL && ft_strcmp(tmp->next->name, new->name) <= 0)
 			tmp = tmp->next;
 		new->next = tmp->next;
 		tmp->next = new;
