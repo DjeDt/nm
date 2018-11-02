@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/02 18:10:48 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/02 18:54:13 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <mach-o/loader.h>
 # include <mach-o/nlist.h>
 # include <fcntl.h>
+# include <mach-o/ranlib.h>
 
 typedef struct			s_section
 {
