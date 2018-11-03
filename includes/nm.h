@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/02 18:54:13 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/03 17:24:08 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 
 # include "libft.h"
 # include "printf.h"
-# include <sys/types.h>
-# include <sys/stat.h>
+# include <ar.h>
+# include <fcntl.h>
+# include <stdio.h>
 # include <unistd.h>
 # include <sys/mman.h>
-# include <stdio.h>
-# include <mach-o/loader.h>
+# include <sys/stat.h>
+# include <sys/types.h>
 # include <mach-o/nlist.h>
-# include <fcntl.h>
+# include <mach-o/loader.h>
 # include <mach-o/ranlib.h>
 
 typedef struct			s_section
@@ -53,6 +54,14 @@ typedef struct			s_binary
 	t_symbol			*sym;
 	t_section			*sect;
 }						t_binary;
+
+/*
+** magic_number lib.a
+** printf("%x", magic_number); -> 72613c21 -> 0x72613c21
+** $> xdd lib.a | head
+** $> 00000000: 213c 6172 6368 3e0a 2331 2f32 3020 2020  !<arch>.#1/20
+*/
+# define MN_LIB 0x72613c21
 
 /*
 ** Return define
@@ -126,6 +135,10 @@ int						handle_x32(t_binary *bin);
 void					parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigned int offset, t_binary *bin);
 void					push_section_chunk_x32(struct section *chunk, t_section **section);
 
+/*
+** library
+*/
+int						handle_library(t_binary *bin);
 /*
 ** utils
 */

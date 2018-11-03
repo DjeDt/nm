@@ -6,12 +6,12 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:31:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/06 20:31:42 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/03 13:24:45 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef OTOOL
-# define OTOOL
+#ifndef OTOOL_H
+# define OTOOL_H
 
 
 

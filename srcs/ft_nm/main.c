@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/02 17:28:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/03 14:13:11 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static int			handle_arch(t_binary *bin)
 	int				ret;
 	unsigned int	magic_number;
 
+	ret = SUCCESS;
 	magic_number = *(unsigned int*)bin->ptr;
 	if (magic_number == MH_MAGIC_64)
 		ret = handle_x64(bin);
@@ -26,12 +27,13 @@ static int			handle_arch(t_binary *bin)
 		ret = handle_x32(bin);
 	else if (magic_number == MH_CIGAM)
 		ft_putendl("ret = handle_endian_x32(&bin);");
+	else if (ft_strncmp((char*)bin->ptr, ARMAG, SARMAG) == 0)
+		handle_library(bin);
 	else
 	{
 		ft_putendl_fd("unknow binary architecture", STDERR_FILENO);
-		return (ERROR);
+		ret = ERROR;
 	}
-	ret = 0;
 	return (ret);
 }
 
