@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/03 14:13:11 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/05 14:53:53 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static int			ft_nm(t_binary *bin, char **av, int *count)
 		return (ERROR);
 	if (bin->opt & FLAG_NAME)
 		ft_printf("\n%s:\n", bin->path);
-	ret = handle_arch(bin);
+  	ret = handle_arch(bin);
 	clean_struct(bin, stat);
 	return (ret);
 }
@@ -94,15 +94,17 @@ void print_opt(unsigned long int i)
 
 /*
   options a faire en premier :
-  g : Display only global (external) symbols.
+
   n : Sort numerically rather than alphabetically.
-  o : Prepend file or archive element name to each output line, rather than only once.
   p : Don't sort; display in symbol-table order.
   r : Sort in reverse order.
+
+  g : Display only global (external) symbols.
   u : Display only undefined symbols.
+  j : Just display the symbol names (no value or type).
   U : Don't display undefined symbols.
   x : Display the symbol table entry's fields in hexadecimal, along with the name as a string.
-  j : Just display the symbol names (no value or type).
+  o : Prepend file or archive element name to each output line, rather than only once.
 */
 int					main(int ac, char **av)
 {
@@ -117,7 +119,6 @@ int					main(int ac, char **av)
 	{
 		if (search_for_flags(&bin, av, count) != SUCCESS)
 			return (ERROR);
-//		print_opt(bin.opt);
 		while (av[count] != NULL && count < ac)
 		{
 			ret = ft_nm(&bin, av, &count);
