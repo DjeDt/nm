@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/03 14:01:11 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/06 19:18:19 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -93,6 +93,7 @@ test:
 
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)
+	@make -sC $(PRINTF_PATH)
 	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) -framework Appkit $(OBJ_NM) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_nm is ready to works\n$(END_COL)"
 
@@ -104,6 +105,7 @@ $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 
 $(FT_OTOOL): $(OBJ_OTOOL)
 	@make -sC $(LIB_PATH)
+	@make -sC $(PRINTF_PATH)
 	@$(CC) -o $@ $(FLAGS) $(ADDFLAGS) $(OBJ_OTOOL) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_otool is ready to works\n$(END_COL)"
 

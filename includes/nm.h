@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/03 17:24:08 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 19:39:37 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ typedef struct			s_binary
 ** $> 00000000: 213c 6172 6368 3e0a 2331 2f32 3020 2020  !<arch>.#1/20
 */
 # define MN_LIB 0x72613c21
+# define LIB32 0x32
+# define LIB64 0x64
 
 /*
 ** Return define
@@ -74,10 +76,12 @@ typedef struct			s_binary
 **  Options define
 **	U : uppercase
 **	L : lowercase
+**	P : print
 */
-# define FLAG_UA (1 << 0)
-# define FLAG_LN (1 << 1)
-# define FLAG_LO (1 << 2)
+
+# define FLAG_P (1 << 0)
+# define FLAG_UA (1 << 1)
+# define FLAG_LN (1 << 2)
 # define FLAG_LP (1 << 3)
 # define FLAG_LR (1 << 4)
 # define FLAG_LU (1 << 5)
@@ -138,12 +142,18 @@ void					push_section_chunk_x32(struct section *chunk, t_section **section);
 /*
 ** library
 */
-int						handle_library(t_binary *bin);
+int						handle_library(t_binary *bin, off_t endoff);
+
 /*
 ** utils
 */
 char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin);
 int						handle_error(const char *input, int type, const char *error);
 int						search_for_flags(t_binary *bin, char **av, int count);
+void					free_sect(t_section **section);
+void					free_sym(t_symbol **symbol);
+
+/* erase it */
+//void print_opt(unsigned long int i);
 
 #endif

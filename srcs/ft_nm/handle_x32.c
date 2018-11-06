@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/27 17:25:29 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 19:30:18 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	print_symbol_x32(t_symbol *symbol)
 	tmp = symbol;
 	while (tmp != NULL)
 	{
-		if (tmp->value != 0)
+		if (tmp->type != 'U')
 			ft_printf("%08lx %c %s\n", tmp->value, tmp->type, tmp->name);
 		else
 			ft_printf("%8s %c %s\n", "", tmp->type, tmp->name);
@@ -85,5 +85,7 @@ int			handle_x32(t_binary *bin)
 		lc_offset += load_command->cmdsize;
 	}
 	print_symbol_x32(bin->sym);
+	free_sect(&bin->sect);
+	free_sym(&bin->sym);
 	return (SUCCESS);
 }

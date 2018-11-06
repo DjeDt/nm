@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 19:14:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/02 17:27:48 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 18:55:26 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ static int	handle_options(unsigned long int *opt, char *input)
 			set_option(opt, FLAG_UA, (*input));
 		else if (*input == 'n')
 			set_option(opt, FLAG_LN, (*input));
-		else if (*input == 'o')
-			set_option(opt, FLAG_LO, (*input));
 		else if (*input == 'p')
 			set_option(opt, FLAG_LP, (*input));
 		else if (*input == 'r')

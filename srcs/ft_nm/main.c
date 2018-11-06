@@ -6,13 +6,25 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/05 14:53:53 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 18:54:59 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-static int			handle_arch(t_binary *bin)
+static void			setup_struct_values(t_binary *bin, char *path)
+{
+	bin->offset = 0;
+	bin->ptr = NULL;
+	bin->sym = NULL;
+	bin->sect = NULL;
+	if (path == NULL)
+		bin->path = "a.out";
+	else
+		bin->path = path;
+}
+
+static int			handle_arch(t_binary *bin, struct stat stat)
 {
 	int				ret;
 	unsigned int	magic_number;
@@ -28,25 +40,13 @@ static int			handle_arch(t_binary *bin)
 	else if (magic_number == MH_CIGAM)
 		ft_putendl("ret = handle_endian_x32(&bin);");
 	else if (ft_strncmp((char*)bin->ptr, ARMAG, SARMAG) == 0)
-		handle_library(bin);
+		handle_library(bin, stat.st_size);
 	else
 	{
 		ft_putendl_fd("unknow binary architecture", STDERR_FILENO);
 		ret = ERROR;
 	}
 	return (ret);
-}
-
-static void			setup_struct_values(t_binary *bin, char *path)
-{
-	bin->offset = 0;
-	bin->ptr = NULL;
-	bin->sym = NULL;
-	bin->sect = NULL;
-	if (path == NULL)
-		bin->path = "a.out";
-	else
-		bin->path = path;
 }
 
 static int			ft_nm(t_binary *bin, char **av, int *count)
@@ -57,39 +57,13 @@ static int			ft_nm(t_binary *bin, char **av, int *count)
 	while ((av[(*count)] != NULL) && (*av[(*count)] == '-'))
 		(*count)++;
 	setup_struct_values(bin, av[(*count)]);
-	if (setup_struct(bin, &stat) == ERROR)
+	if (setup_struct(bin, &stat) != SUCCESS)
 		return (ERROR);
 	if (bin->opt & FLAG_NAME)
 		ft_printf("\n%s:\n", bin->path);
-  	ret = handle_arch(bin);
+  	ret = handle_arch(bin, stat);
 	clean_struct(bin, stat);
 	return (ret);
-}
-
-void print_opt(unsigned long int i)
-{
-	if (i & FLAG_UA)
-		ft_printf("%c is set\n", 'A');
-	if (i & FLAG_LN)
-		ft_printf("%c is set\n", 'n');
-	if (i & FLAG_LO)
-		ft_printf("%c is set\n", 'o');
-	if (i & FLAG_LP)
-		ft_printf("%c is set\n", 'p');
-	if (i & FLAG_LR)
-		ft_printf("%c is set\n", 'r');
-	if (i & FLAG_LU)
-		ft_printf("%c is set\n", 'u');
-	if (i & FLAG_UU)
-		ft_printf("%c is set\n", 'U');
-	if (i & FLAG_LM)
-		ft_printf("%c is set\n", 'm');
-	if (i & FLAG_LX)
-		ft_printf("%c is set\n", 'x');
-	if (i & FLAG_LJ)
-		ft_printf("%c is set\n", 'j');
-	if (i & FLAG_LT)
-		ft_printf("%c is set\n", 't');
 }
 
 /*
@@ -104,7 +78,7 @@ void print_opt(unsigned long int i)
   j : Just display the symbol names (no value or type).
   U : Don't display undefined symbols.
   x : Display the symbol table entry's fields in hexadecimal, along with the name as a string.
-  o : Prepend file or archive element name to each output line, rather than only once.
+
 */
 int					main(int ac, char **av)
 {
