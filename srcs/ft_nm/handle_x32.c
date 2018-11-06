@@ -6,17 +6,19 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 19:30:18 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 20:35:41 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-static void	print_symbol_x32(t_symbol *symbol)
+static void	print_symbol_x32(t_binary *bin)
 {
 	t_symbol *tmp;
 
-	tmp = symbol;
+	tmp = bin->sym;
+	if (bin->opt & FLAG_MULT_FILE)
+		ft_printf("\n%s:\n", bin->path);
 	while (tmp != NULL)
 	{
 		if (tmp->type != 'U')
@@ -84,7 +86,7 @@ int			handle_x32(t_binary *bin)
 			parse_load_command_x32(bin, lc_offset);
 		lc_offset += load_command->cmdsize;
 	}
-	print_symbol_x32(bin->sym);
+	print_symbol_x32(bin);
 	free_sect(&bin->sect);
 	free_sym(&bin->sym);
 	return (SUCCESS);

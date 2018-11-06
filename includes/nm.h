@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 19:39:37 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 20:39:26 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,19 +78,18 @@ typedef struct			s_binary
 **	L : lowercase
 **	P : print
 */
-
-# define FLAG_P (1 << 0)
-# define FLAG_UA (1 << 1)
-# define FLAG_LN (1 << 2)
-# define FLAG_LP (1 << 3)
-# define FLAG_LR (1 << 4)
-# define FLAG_LU (1 << 5)
-# define FLAG_UU (1 << 6)
-# define FLAG_LM (1 << 7)
-# define FLAG_LX (1 << 8)
-# define FLAG_LJ (1 << 9)
-# define FLAG_LT (1 << 10)
-# define FLAG_NAME (1 << 11)
+# define FLAG_UA (1 << 0)
+# define FLAG_LN (1 << 1)
+# define FLAG_LP (1 << 2)
+# define FLAG_LR (1 << 3)
+# define FLAG_LU (1 << 4)
+# define FLAG_UU (1 << 5)
+# define FLAG_LM (1 << 6)
+# define FLAG_LX (1 << 7)
+# define FLAG_LJ (1 << 8)
+# define FLAG_LT (1 << 9)
+# define FLAG_NO_FILE (1 << 10)
+# define FLAG_MULT_FILE (1 << 11)
 
 /*
 ** Errors define

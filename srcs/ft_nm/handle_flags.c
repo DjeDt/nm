@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 19:14:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 18:55:26 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/06 21:17:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,24 +66,24 @@ static int	handle_options(unsigned long int *opt, char *input)
 
 int			search_for_flags(t_binary *bin, char **av, int count)
 {
-	int ret;
-	int	flag_name;
+	int	nb_file;
 
+	nb_file = 0;
 	bin->opt = 0;
-	flag_name = 0;
-	ret = SUCCESS;
 	while (av[count] != NULL)
 	{
 		if (*av[count] == '-')
 		{
-			if ((ret = handle_options(&bin->opt, av[count])) != SUCCESS)
-				return (ret);
+			if (handle_options(&bin->opt, av[count]) != SUCCESS)
+				return (ERROR);
 		}
 		else
-			flag_name++;
+			nb_file++;
 		count++;
 	}
-	if (flag_name >= 2)
-		set_option(&bin->opt, FLAG_NAME, '\0');
-	return (ret);
+	if (nb_file == 0)
+		set_option(&bin->opt, FLAG_NO_FILE, '\0');
+	else if (nb_file > 1)
+		set_option(&bin->opt, FLAG_MULT_FILE, '\0');
+	return (SUCCESS);
 }
