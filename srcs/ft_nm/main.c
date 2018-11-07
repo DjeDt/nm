@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 20:44:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/07 19:00:39 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,31 +21,49 @@ static void			setup_struct_values(t_binary *bin, char *path)
 	bin->path = path;
 }
 
-static int			handle_arch(t_binary *bin, struct stat stat)
+int			handle_arch(t_binary *bin, struct stat stat)
 {
 	int				ret;
 	unsigned int	magic_number;
 
+	ret = 0;
 	magic_number = *(unsigned int*)bin->ptr;
 	if (magic_number == MH_MAGIC_64)
-		ret = handle_x64(bin);
+		ret = handle_x64(bin, stat);
 	else if (magic_number == MH_CIGAM_64)
 	{
-		ret = 0 ;
-		ft_putendl("ret = handle_endian_x64(&bin);");
+		ft_putendl("1");
+		exit(1);
+		bin->opt |= FLAG_ENDIAN;
+		ret = handle_x64(bin, stat);
+//		ft_putendl("ret = handle_endian_x64(&bin);");
 	}
 	else if (magic_number == MH_MAGIC)
 		ret = handle_x32(bin);
 	else if (magic_number == MH_CIGAM)
 	{
-		ret = 0 ;
 		ft_putendl("ret = handle_endian_x32(&bin);");
+		ft_putendl("2");
+		exit(1);
+		bin->opt |= FLAG_ENDIAN;
+		ret = handle_x32(bin);
+	}
+	else if (magic_number == FAT_MAGIC)
+	{
+		ft_putendl("fat magic");
+		ret = handle_fat(bin, stat);
+	}
+	else if (magic_number == FAT_CIGAM)
+	{
+		ft_putendl("fat cygam");
+		bin->opt |= FLAG_ENDIAN;
+		ret = handle_fat(bin, stat);
 	}
 	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
-		ret = handle_library(bin, stat.st_size);
+		ret = handle_library(bin, stat);
 	else
 	{
-		ft_putendl_fd("unknow binary architecture", STDERR_FILENO);
+		ft_putendl_fd("unknow architecture", STDERR_FILENO);
 		ret = ERROR;
 	}
 	return (ret);

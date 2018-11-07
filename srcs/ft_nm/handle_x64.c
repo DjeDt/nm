@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 20:34:19 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/07 18:31:13 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ static void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
 	}
 }
 
-int			handle_x64(t_binary *bin)
+int			handle_x64(t_binary *bin, struct stat stat)
 {
 	uint32_t				count;
+	uint32_t				lc_offset;
 	struct mach_header_64	*header;
-	unsigned int			lc_offset;
 	struct load_command		*load_command;
 
 	count = -1;
@@ -84,8 +84,13 @@ int			handle_x64(t_binary *bin)
 			parse_segment_x64(bin, lc_offset);
 		else if (load_command->cmd == LC_SYMTAB)
 			parse_load_command_x64(bin, lc_offset);
+//		printf("1 : %u -> %u\n", lc_offset, load_command->cmdsize);
 		lc_offset += load_command->cmdsize;
+//		lc_offset += move_offset_x32(bin, stat, load_command->cmdsize);
+		//		lc_offset = reverse_big(lc_offset);
+//		printf("2 : %u\n", lc_offset);
 	}
+	(void)stat;
 	print_symbol_x64(bin);
 	free_sect(&bin->sect);
 	free_sym(&bin->sym);

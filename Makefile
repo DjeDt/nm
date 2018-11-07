@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/06 19:18:19 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/07 15:47:59 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -52,13 +52,15 @@ INCLUDES	= -I $(LIB_PATH)/$(INC_PATH) -I $(INC_PATH) -I $(PRINTF_PATH)/$(INC_PAT
 SRCS_NM 	=								\
 			$(DIR_NM)/main.c				\
 			$(DIR_NM)/setup_struct.c		\
+			$(DIR_NM)/handle_flags.c		\
 			$(DIR_NM)/handle_x64.c			\
 			$(DIR_NM)/handle_x32.c			\
+			$(DIR_NM)/handle_fat.c			\
 			$(DIR_NM)/handle_library.c		\
 			$(DIR_NM)/sections.c			\
-			$(DIR_NM)/resolve_symbol.c		\
 			$(DIR_NM)/symbols.c				\
-			$(DIR_NM)/handle_flags.c		\
+			$(DIR_NM)/resolve_symbol.c		\
+			$(DIR_NM)/offset.c				\
 			$(DIR_NM)/errors.c
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
