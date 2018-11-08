@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/07 18:33:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/08 21:04:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct			s_symbol
 
 typedef struct			s_binary
 {
+	int					endian;
 	unsigned long		opt;
 	unsigned long		offset;
 	char				*ptr;
@@ -63,6 +64,12 @@ typedef struct			s_binary
 # define ERROR 1
 # define FLAG_ERROR 2
 # define SUCCESS 0
+
+/*
+** Endian define
+*/
+# define LTL_END 1
+# define BIG_END 0
 
 /*
 **  Options define
@@ -122,15 +129,15 @@ int						handle_arch(t_binary *bin, struct stat stat);
 ** x64
 */
 int						handle_x64(t_binary *bin, struct stat stat);
-void					parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsigned int offset, t_binary *bin);
-void					push_section_chunk_x64(struct section_64 *chunk, t_section **section);
+int						parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, t_binary *bin, struct stat stat);
+void					push_section_chunk_x64(int endian, struct section_64 *chunk, t_section **section);
 
 /*
 ** x32
 */
-int						handle_x32(t_binary *bin);
-void					parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigned int offset, t_binary *bin);
-void					push_section_chunk_x32(struct section *chunk, t_section **section);
+int						handle_x32(t_binary *bin, struct stat stat);
+int						parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, t_binary *bin, struct stat stat);
+void					push_section_chunk_x32(int endian, struct section *chunk, t_section **section);
 
 /*
 ** library
@@ -146,17 +153,18 @@ int						handle_fat(t_binary *bin, struct stat stat);
 ** utils
 */
 uint32_t				reverse(int32_t x);
-char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, t_binary *bin);
+char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, uint8_t n_value, t_binary *bin);
 int						handle_error(const char *input, int type, const char *error);
 int						search_for_flags(t_binary *bin, char **av, int count);
 void					free_sect(t_section **section);
 void					free_sym(t_symbol **symbol);
 
-
-uint32_t        move_offset_x32(t_binary *bin, struct stat stat, uint32_t x);
-uint64_t        move_offset_x64(t_binary *bin, struct stat stat, uint64_t x);
-
-/* erase it */
-//void print_opt(unsigned long int i);
+/*
+** Endianness and offset
+*/
+void					*move_ptr(t_binary *bin, struct stat stat, uint32_t size);
+uint16_t        		reverse_16(int endian, uint16_t x);
+uint32_t        		reverse_32(int endian, uint32_t x);
+uint64_t        		reverse_64(int endian, uint64_t x);
 
 #endif

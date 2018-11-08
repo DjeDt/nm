@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/07 18:31:13 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/08 21:03:52 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,70 +29,93 @@ static void	print_symbol_x64(t_binary *bin)
 	}
 }
 
-static void	parse_segment_x64(t_binary *bin, unsigned int lc_offset)
+static int	parse_segment_x64(t_binary *bin, struct stat stat)
 {
 	uint32_t					count;
-	unsigned int				seg_offset;
+	uint32_t					limit;
 	struct section_64			*section;
 	struct segment_command_64	*segment;
 
 	count = -1;
-	segment = (struct segment_command_64*)((char*)bin->ptr + lc_offset);
-	seg_offset = lc_offset + sizeof(*segment);
-	while (++count < segment->nsects)
+	if (!(segment = (struct segment_command_64*)move_ptr(bin, stat, bin->offset)))
+		return (ERROR);
+	bin->offset += sizeof(*segment);
+	limit = reverse_32(bin->endian, segment->nsects);
+	while (++count < limit)
 	{
-		section = (struct section_64*)((char*)bin->ptr + seg_offset);
-		push_section_chunk_x64(section, &bin->sect);
-		seg_offset += sizeof(*section);
+		if (!(section = (struct section_64*)move_ptr(bin, stat, bin->offset)))
+			return (ERROR);
+		push_section_chunk_x64(bin->endian, section, &bin->sect);
+		bin->offset += sizeof(*section);
 	}
+	return (SUCCESS);
 }
 
-static void	parse_load_command_x64(t_binary *bin, unsigned int lc_offset)
+static int	parse_load_command_x64(t_binary *bin, struct stat stat)
 {
 	uint32_t				count;
-	unsigned int			sym_offset;
+	uint32_t				limit;
 	struct nlist_64			*list;
 	struct symtab_command	*symtab;
 
 	count = -1;
-	symtab = (struct symtab_command*)((char*)bin->ptr + lc_offset);
-	sym_offset = symtab->symoff;
-	while (++count < symtab->nsyms)
+	if (!(symtab = (struct symtab_command*)move_ptr(bin, stat, bin->offset)))
+		return (ERROR);
+	bin->offset = reverse_32(bin->endian, symtab->symoff);
+	limit = reverse_32(bin->endian, symtab->nsyms);
+	while (++count < limit)
 	{
-		list = (struct nlist_64*)((char*)bin->ptr + sym_offset);
+		if ((list = (struct nlist_64*)move_ptr(bin, stat, bin->offset)) == NULL)
+			return (ERROR);
 		if (!(list->n_type & N_STAB))
-			parse_symbol_x64(symtab, list, sym_offset, bin);
-		sym_offset += sizeof(*list);
+		{
+			if (parse_symbol_x64(symtab, list, bin, stat) != SUCCESS)
+				return (ERROR);
+		}
+		bin->offset += sizeof(*list);
 	}
+	return (SUCCESS);
+}
+
+static int	parse_mach_header_x64(t_binary *bin, struct stat stat, struct mach_header_64 *header)
+{
+	int					ret;
+	uint32_t			count;
+	uint32_t			limit;
+	struct load_command	*load_command;
+
+	ret = SUCCESS;
+	count = -1;
+	limit = reverse_64(bin->endian, header->ncmds);
+	while (++count < limit)
+	{
+		if (!(load_command = (struct load_command*)move_ptr(bin, stat, bin->offset)))
+			return (ERROR);
+		if (load_command->cmd == LC_SEGMENT_64)
+			ret = parse_segment_x64(bin, stat);
+		else if (load_command->cmd == LC_SYMTAB)
+			ret = parse_load_command_x64(bin, stat);
+		else
+			bin->offset += reverse_32(bin->endian, load_command->cmdsize);
+		if (ret != SUCCESS)
+			return (ret);
+	}
+	return (SUCCESS);
 }
 
 int			handle_x64(t_binary *bin, struct stat stat)
 {
-	uint32_t				count;
-	uint32_t				lc_offset;
+	int						ret;
 	struct mach_header_64	*header;
-	struct load_command		*load_command;
 
-	count = -1;
-	header = (struct mach_header_64*)bin->ptr;
+	header = move_ptr(bin, stat, bin->offset);
+	if (header == NULL)
+		return (ERROR);
 	bin->offset = sizeof(*header);
-	lc_offset = bin->offset;
-	while (++count < header->ncmds)
-	{
-		load_command = (struct load_command*)((char*)bin->ptr + lc_offset);
-		if (load_command->cmd == LC_SEGMENT_64)
-			parse_segment_x64(bin, lc_offset);
-		else if (load_command->cmd == LC_SYMTAB)
-			parse_load_command_x64(bin, lc_offset);
-//		printf("1 : %u -> %u\n", lc_offset, load_command->cmdsize);
-		lc_offset += load_command->cmdsize;
-//		lc_offset += move_offset_x32(bin, stat, load_command->cmdsize);
-		//		lc_offset = reverse_big(lc_offset);
-//		printf("2 : %u\n", lc_offset);
-	}
-	(void)stat;
-	print_symbol_x64(bin);
+	ret = parse_mach_header_x64(bin, stat, header);
+	if (ret == SUCCESS)
+		print_symbol_x64(bin);
 	free_sect(&bin->sect);
 	free_sym(&bin->sym);
-	return (SUCCESS);
+	return (ret);
 }

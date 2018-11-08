@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/07 19:00:39 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/08 17:52:32 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,23 @@
 
 static void			setup_struct_values(t_binary *bin, char *path)
 {
+//	unsigned long long	*c;
+
 	bin->offset = 0;
 	bin->ptr = NULL;
 	bin->sym = NULL;
 	bin->sect = NULL;
 	bin->path = path;
+	bin->endian = FALSE;
+	/* if (*(unsigned char*)&c) */
+	/* 	bin->endian = LTL_END;//return LITTLE; */
+	/* else */
+	/* 	bin->endian = BIG_END; */
+	/* c = (char*)&bin->endian; */
+	/* if (*c) */
+	/* 	bin->endian = LTL_END; */
+	/* else */
+	/* 	bin->endian = BIG_END; */
 }
 
 int			handle_arch(t_binary *bin, struct stat stat)
@@ -26,39 +38,16 @@ int			handle_arch(t_binary *bin, struct stat stat)
 	int				ret;
 	unsigned int	magic_number;
 
-	ret = 0;
+	ret = SUCCESS;
 	magic_number = *(unsigned int*)bin->ptr;
-	if (magic_number == MH_MAGIC_64)
+	if (magic_number == MH_CIGAM_64 || magic_number == MH_CIGAM || magic_number == FAT_CIGAM)
+		bin->endian = TRUE;
+	if (magic_number == MH_MAGIC_64 || magic_number == MH_CIGAM_64)
 		ret = handle_x64(bin, stat);
-	else if (magic_number == MH_CIGAM_64)
-	{
-		ft_putendl("1");
-		exit(1);
-		bin->opt |= FLAG_ENDIAN;
-		ret = handle_x64(bin, stat);
-//		ft_putendl("ret = handle_endian_x64(&bin);");
-	}
-	else if (magic_number == MH_MAGIC)
-		ret = handle_x32(bin);
-	else if (magic_number == MH_CIGAM)
-	{
-		ft_putendl("ret = handle_endian_x32(&bin);");
-		ft_putendl("2");
-		exit(1);
-		bin->opt |= FLAG_ENDIAN;
-		ret = handle_x32(bin);
-	}
-	else if (magic_number == FAT_MAGIC)
-	{
-		ft_putendl("fat magic");
+	else if (magic_number == MH_MAGIC || magic_number == MH_CIGAM)
+		ret = handle_x32(bin, stat);
+	else if (magic_number == FAT_MAGIC || magic_number == FAT_CIGAM)
 		ret = handle_fat(bin, stat);
-	}
-	else if (magic_number == FAT_CIGAM)
-	{
-		ft_putendl("fat cygam");
-		bin->opt |= FLAG_ENDIAN;
-		ret = handle_fat(bin, stat);
-	}
 	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
 		ret = handle_library(bin, stat);
 	else

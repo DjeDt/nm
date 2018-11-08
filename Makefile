@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/07 15:47:59 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/08 21:04:49 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -17,7 +17,7 @@ FT_OTOOL		= ft_otool
 # compilation #
 CC			= gcc
 FLAGS		= -Wall -Wextra -Werror -g3
-ADDFLAGS	= #-O1 -g3 -fsanitize=address -fno-omit-frame-pointer -Wpadded
+ADDFLAGS	= -O1 -g3 -fsanitize=address -fno-omit-frame-pointer #-Wpadded
 
 # Directories #
 OBJ_PATH	= obj

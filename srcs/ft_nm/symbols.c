@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 16:07:49 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/05 15:32:46 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/08 21:09:49 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ static void	push_symbol_chunk(unsigned long opt, t_symbol *new, t_symbol **symbo
 		}
 		return ;
 	}
-
 	if ((*symbol) == NULL || sort((*symbol)->name, new->name) > 0)
 	{
 		new->next = (*symbol);
@@ -102,34 +101,52 @@ static void	push_symbol_chunk(unsigned long opt, t_symbol *new, t_symbol **symbo
 	}
 }
 
-void	parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, unsigned int offset, t_binary *bin)
+void	*resolve_symbol_name(t_binary *bin, struct stat stat, uint32_t stroff, uint32_t n_strx)
 {
-	t_symbol *new;
-	void	*sort;
+	void		*name;
+	uint32_t	roff;
+	uint32_t	rstrx;
 
-	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol))))
-		return ;
-	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	new->fileoff = offset;
-	new->value = (uint32_t)list->n_value;
-	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
-	new->next = NULL;
-	sort = handle_sort_flag(bin->opt);
-	push_symbol_chunk(bin->opt, new, &bin->sym, sort);
+	rstrx = reverse_32(bin->endian, n_strx);
+	roff = reverse_32(bin->endian, stroff);
+	name = move_ptr(bin, stat, rstrx + roff);
+	return (name);
 }
 
-void	parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, unsigned int offset, t_binary *bin)
+int		parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, t_binary *bin, struct stat stat)
 {
 	t_symbol *new;
 	void	*sort;
 
 	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol))))
-		return ;
-	new->type = resolve_symbol_type(list->n_type, list->n_sect, bin);
-	new->fileoff = offset;
-	new->value = list->n_value;
-	new->name = bin->ptr + (symtab->stroff + list->n_un.n_strx);
+		return (ERROR);
+	new->type = resolve_symbol_type(list->n_type, list->n_sect, list->n_value, bin);
+	new->fileoff = bin->offset;
+	new->value = (uint32_t)reverse_32(bin->endian, list->n_value);
+	new->name = resolve_symbol_name(bin, stat, symtab->stroff, list->n_un.n_strx);
 	new->next = NULL;
+	if (new->name == NULL)
+		return (ERROR);
 	sort = handle_sort_flag(bin->opt);
 	push_symbol_chunk(bin->opt, new, &bin->sym, sort);
+	return (SUCCESS);
+}
+
+int		parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, t_binary *bin, struct stat stat)
+{
+	t_symbol *new;
+	void	*sort;
+
+	if (!(new = (t_symbol*)malloc(sizeof(char) * sizeof(t_symbol))))
+		return (ERROR);
+	new->type = resolve_symbol_type(list->n_type, list->n_sect, list->n_value, bin);
+	new->fileoff = bin->offset;
+	new->value = reverse_64(bin->endian, list->n_value);
+	new->name = resolve_symbol_name(bin, stat, symtab->stroff, list->n_un.n_strx);
+	new->next = NULL;
+	if (new->name == NULL)
+		return (ERROR);
+	sort = handle_sort_flag(bin->opt);
+	push_symbol_chunk(bin->opt, new, &bin->sym, sort);
+	return (SUCCESS);
 }
