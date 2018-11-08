@@ -51,6 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 *~
-hell
-ft_nm
-ft_otool
+./ft_nm
+./ft_otool
+.rl_nm.result
+.my_nm.result
