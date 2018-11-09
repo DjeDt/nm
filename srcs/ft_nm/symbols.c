@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 16:07:49 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/08 21:09:49 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 17:53:52 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int		parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, t_binar
 		return (ERROR);
 	new->type = resolve_symbol_type(list->n_type, list->n_sect, list->n_value, bin);
 	new->fileoff = bin->offset;
-	new->value = (uint32_t)reverse_32(bin->endian, list->n_value);
+	new->value = reverse_32(bin->endian, list->n_value);
 	new->name = resolve_symbol_name(bin, stat, symtab->stroff, list->n_un.n_strx);
 	new->next = NULL;
 	if (new->name == NULL)

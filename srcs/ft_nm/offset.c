@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 15:27:57 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 11:05:23 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 18:56:51 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ uint16_t		reverse_16(int endian, uint16_t x)
 
 	y = x;
 	if (endian == TRUE)
-	{
-//		ft_putendl("reverse_16");
 		return ((y << 8) | ((y >> 8) & 0xFF));
-	}
 	return (y);
 }
 
@@ -32,7 +29,6 @@ uint32_t		reverse_32(int endian, uint32_t x)
 	y = x;
 	if (endian == TRUE)
 	{
-	//		ft_putendl("reverse_32");
 		y = ((y << 8) & 0xFF00FF00) | ((y >> 8) & 0xFF00FF);
 		return (y << 16) | (y >> 16);
 	}
@@ -46,11 +42,10 @@ uint64_t		reverse_64(int endian, uint64_t x)
 	y = x;
 	if (endian == TRUE)
 	{
-//		ft_putendl("reverse_64");
-		/* x = ((x << 8) & 0xFF00FF00FF00FF00ULL ) | ((x >> 8) & 0x00FF00FF00FF00FFULL ); */
-		/* x = ((x << 16) & 0xFFFF0000FFFF0000ULL ) | ((x >> 16) & 0x0000FFFF0000FFFFULL ); */
-		y = ((y << 8) & 0xFF00FF00FF00FF00U) | ((y >> 8) & 0x00FF00FF00FF00FFU);
-		y = ((y << 16) & 0xFFFF0000FFFF0000U) | ((y >> 16) & 0x0000FFFF0000FFFFU);
+		y = ((y << 8) & 0xFF00FF00FF00FF00U) \
+			| ((y >> 8) & 0x00FF00FF00FF00FFU);
+		y = ((y << 16) & 0xFFFF0000FFFF0000U) \
+			| ((y >> 16) & 0x0000FFFF0000FFFFU);
 		return ((y << 32) | (y >> 32));
 	}
 	return (y);
@@ -58,7 +53,7 @@ uint64_t		reverse_64(int endian, uint64_t x)
 
 void			*move_ptr(t_binary *bin, struct stat stat, uint32_t size)
 {
-	if ((off_t)size > stat.st_size)
+	if (bin->ptr + size > bin->ptr + stat.st_size)
 		return (NULL);
 	return (bin->ptr + size);
 }

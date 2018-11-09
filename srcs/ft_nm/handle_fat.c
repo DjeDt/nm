@@ -6,51 +6,47 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/08 14:31:05 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 18:58:35 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "nm.h"
+#include "nm.h"
 
-uint32_t reverse(int32_t x)
+int		parse_fat_header_x32(t_binary *bin, struct stat stat)
 {
-	uint8_t		data[4];
+	int				ret;
+	struct fat_arch *fat;
+	t_binary		bin_cpy;
 
-    ft_memcpy(&data, &x, sizeof(data));
-	return ((uint32_t) data[3] << 0) | ((uint32_t) data[2] << 8)	\
-		| ((uint32_t) data[1] << 16) | ((uint32_t) data[0] << 24);
-}
-
-uint32_t reverse2(int32_t x)
-{
-	uint8_t		data[4];
-
-    ft_memcpy(&data, &x, sizeof(data));
-	return ((uint32_t) data[0] << 0) | ((uint32_t) data[1] << 8)	\
-		| ((uint32_t) data[2] << 16) | ((uint32_t) data[3] << 24);
-}
-
-int		handle_fat_endian(t_binary *bin, struct stat stat)
-{
-	struct fat_header	*fat;
-
-	fat = (struct fat_header*)((void*)bin->ptr);
-	(void)stat;
-	return (0);
+	fat = move_ptr(bin, stat, bin->offset);
+	ft_memcpy(&bin_cpy, bin, sizeof(*bin));
+	if (bin_cpy.ptr == NULL)
+		return (ERROR);
+	bin_cpy.ptr = move_ptr(bin, stat, reverse_32(bin->endian, fat->offset));
+	ret = handle_arch(&bin_cpy, stat);
+	return (ret);
 }
 
 int		handle_fat(t_binary *bin, struct stat stat)
 {
-	(void)stat;
-	uint32_t			x;
-	struct fat_header	*fat;
+	int					ret;
+	uint32_t			count;
+	uint32_t			limit;
+	struct fat_header	*fat_header;
 
-	fat = (struct fat_header*)((void*)bin->ptr);
-//	x = (uint32_t)move_offset_x32(bin, stat, fat->magic);
-	x = 0;
-	if (x == FAT_MAGIC)
-		ft_putendl("32");//		handle_fat_x32();
-	else if (x == FAT_MAGIC_64)
-		ft_putendl("64");
-	return (SUCCESS);
+	count = -1;
+	ret = SUCCESS;
+	if (!(fat_header = (struct fat_header*)move_ptr(bin, stat, bin->offset)))
+		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_FHDR_STR));
+	limit = reverse_32(bin->endian, fat_header->nfat_arch);
+	bin->offset += sizeof(*fat_header);
+	if (!(bin->opt & FLAG_MULT_FILE))
+		bin->opt |= FLAG_MULT_FILE;
+	while (++count < limit)
+	{
+		if ((ret = parse_fat_header_x32(bin, stat)) != SUCCESS)
+			return (ERROR);
+		bin->offset += sizeof(struct fat_arch);
+	}
+	return (ret);
 }

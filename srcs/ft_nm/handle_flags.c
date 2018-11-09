@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 19:14:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 21:17:04 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 19:00:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ static int	handle_options(unsigned long int *opt, char *input)
 	{
 		if (*input == 'h')
 			return (print_help());
-		else if (*input == 'A')
-			set_option(opt, FLAG_UA, (*input));
 		else if (*input == 'n')
 			set_option(opt, FLAG_LN, (*input));
 		else if (*input == 'p')
@@ -49,14 +47,10 @@ static int	handle_options(unsigned long int *opt, char *input)
 			set_option(opt, FLAG_LU, (*input));
 		else if (*input == 'U')
 			set_option(opt, FLAG_UU, (*input));
-		else if (*input == 'm')
-			set_option(opt, FLAG_LM, (*input));
 		else if (*input == 'x')
 			set_option(opt, FLAG_LX, (*input));
 		else if (*input == 'j')
 			set_option(opt, FLAG_LJ, (*input));
-		else if (*input == 't')
-			set_option(opt, FLAG_LT, (*input));
 		else
 			return (handle_error("ft_nm", FLAG_UKW, input));
 		input++;

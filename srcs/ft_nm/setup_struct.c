@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 12:41:13 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/06 18:33:16 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 19:10:37 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int		setup_struct(t_binary *bin, struct stat *stat)
 		return (handle_error(bin->path, IS_DIR, ERR_DIR_STR));
 	if (stat->st_size < 1)
 		return (ERROR);
-	if ((bin->ptr = mmap(0, stat->st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+	if ((bin->ptr = mmap(\
+			0, stat->st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
 		return (handle_error(bin->path, MMAP_ERR, MMAP_ERR_STR));
 	close(fd);
 	return (SUCCESS);

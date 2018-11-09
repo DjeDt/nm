@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 10:59:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 11:28:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ typedef struct			s_binary
 # define FLAG_LT (1 << 9)
 # define FLAG_NO_FILE (1 << 10)
 # define FLAG_MULT_FILE (1 << 11)
-# define FLAG_ENDIAN (1 << 12)
+//# define FLAG_ENDIAN (1 << 12)
 
 /*
 ** Errors define
@@ -121,8 +121,9 @@ typedef struct			s_binary
 # define MISSING_LC_STR "input object seems to be corrupted, truncated or malformed (load_command)."
 # define MISSING_ST_STR "input object seems to be corrupted, truncated or malformed (symtab_command)."
 # define MISSING_NL_STR "input object seems to be corrupted, truncated or malformed (nlist)."
-# define MISSING_SECT_STR "input object seems to be corrupted, truncated or malformed (section)"
-# define MISSING_SEG_STR "input object seems to be corrupted, truncated or malformed (segment_command)"
+# define MISSING_SECT_STR "input object seems to be corrupted, truncated or malformed (section)."
+# define MISSING_SEG_STR "input object seems to be corrupted, truncated or malformed (segment_command)."
+# define MISSING_FHDR_STR "input object seems to be corrupted, truncated or malformed (fat header)."
 
 # define NM_USAGE "USAGE: ./ft_nm [options] <input_files>\nOPTIONS: [...]\n"
 

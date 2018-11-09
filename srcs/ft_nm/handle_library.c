@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/03 13:59:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/08 20:58:36 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 19:01:53 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,18 @@ static int			parse_object_header(t_binary bin, struct stat stat)
 		if (!(ob_header = (struct ar_hdr*)move_ptr(&bin, stat, bin.offset)))
 			return (ERROR);
 		bin_cpy.offset = 0;
-		bin_cpy.ptr = move_ptr(&bin, stat, bin.offset + get_extended_format(ob_header) + sizeof(*ob_header));
-		ft_printf("\n%s(%s):\n", bin.path, (char*)ob_header + sizeof(*ob_header));
+		bin_cpy.ptr = move_ptr(&bin, stat, \
+							bin.offset + get_extended_format(ob_header) \
+							+ sizeof(*ob_header));
+		ft_printf("\n%s(%s):\n", \
+				bin.path, (char*)ob_header + sizeof(*ob_header));
 		ret = handle_arch(&bin_cpy, stat);
 		bin.offset += ft_atoi(ob_header->ar_size) + sizeof(*ob_header);
 	}
 	return (ret);
 }
 
-int		handle_library(t_binary *bin, struct stat stat)
+int					handle_library(t_binary *bin, struct stat stat)
 {
 	int				ret;
 	struct ar_hdr	*ar_header;
@@ -50,8 +53,7 @@ int		handle_library(t_binary *bin, struct stat stat)
 	ar_header = move_ptr(bin, stat, bin->offset);
 	if (ar_header == NULL)
 		return (ERROR);
-	bin->offset += sizeof(*ar_header);
-	bin->offset += ft_atoi(ar_header->ar_size);
+	bin->offset += sizeof(*ar_header) + ft_atoi(ar_header->ar_size);
 	ret = parse_object_header(*bin, stat);
 	return (ret);
 }
