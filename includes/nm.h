@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/08 21:04:22 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 10:59:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct			s_binary
 {
 	int					endian;
 	unsigned long		opt;
-	unsigned long		offset;
+	uint32_t			offset;
 	char				*ptr;
 	char				*path;
 	t_symbol			*sym;
@@ -115,6 +115,14 @@ typedef struct			s_binary
 
 # define DOUBLE_FLAG_ERR 7
 # define DOUBLE_FLAG_ERR_STR "may only occur zero or one times!"
+
+# define MISSING_PTR_ERR 8
+# define MISSING_HDR_STR "input object seems to be corrupted, truncated or malformed (mach_header)."
+# define MISSING_LC_STR "input object seems to be corrupted, truncated or malformed (load_command)."
+# define MISSING_ST_STR "input object seems to be corrupted, truncated or malformed (symtab_command)."
+# define MISSING_NL_STR "input object seems to be corrupted, truncated or malformed (nlist)."
+# define MISSING_SECT_STR "input object seems to be corrupted, truncated or malformed (section)"
+# define MISSING_SEG_STR "input object seems to be corrupted, truncated or malformed (segment_command)"
 
 # define NM_USAGE "USAGE: ./ft_nm [options] <input_files>\nOPTIONS: [...]\n"
 

@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/08 20:53:59 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/09 11:14:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,13 @@ static int	parse_segment_x32(t_binary *bin, struct stat stat)
 
 	count = -1;
 	if (!(segment = (struct segment_command*)move_ptr(bin, stat, bin->offset)))
-		return (ERROR);
+		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_SEG_STR));
 	bin->offset += sizeof(*segment);
 	limit = reverse_32(bin->endian, segment->nsects);
 	while (++count < segment->nsects)
 	{
 		if (!(section = (struct section*)move_ptr(bin, stat, bin->offset)))
-			return (ERROR);
+			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_SECT_STR));
 		push_section_chunk_x32(bin->endian, section, &bin->sect);
 		bin->offset += sizeof(*section);
 	}
@@ -60,13 +60,13 @@ static int	parse_load_command_x32(t_binary *bin, struct stat stat)
 
 	count = -1;
 	if (!(symtab = (struct symtab_command*)move_ptr(bin, stat, bin->offset)))
-		return (ERROR);
+		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_ST_STR));
 	bin->offset = reverse_32(bin->endian, symtab->symoff);
 	limit = reverse_32(bin->endian, symtab->nsyms);
 	while (++count < symtab->nsyms)
 	{
 		if (!(list = (struct nlist*)move_ptr(bin, stat, bin->offset)))
-			return (ERROR);
+			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_NL_STR));
 		if (!(list->n_type & N_STAB))
 		{
 			if (parse_symbol_x32(symtab, list, bin, stat) != SUCCESS)
@@ -89,18 +89,21 @@ static int	parse_mach_header_x32(t_binary *bin, struct stat stat, struct mach_he
 	limit = reverse_32(bin->endian, header->ncmds);
 	while (++count < limit)
 	{
-		if (!(load_command = (struct load_command*)move_ptr(bin, stat, bin->offset)))
-			return (ERROR);
+		if (!(load_command = move_ptr(bin, stat, bin->offset)))
+			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_LC_STR));
 		if (load_command->cmd == LC_SEGMENT)
 			ret = parse_segment_x32(bin, stat);
 		else if (load_command->cmd == LC_SYMTAB)
-			ret = parse_load_command_x32(bin, stat);
+		{
+			parse_load_command_x32(bin, stat);
+			break ;
+		}
 		else
 			bin->offset += reverse_32(bin->endian, load_command->cmdsize);
 		if (ret != SUCCESS)
-			return (ret);
+			break ;
 	}
-	return (SUCCESS);
+	return (ret);
 }
 
 int			handle_x32(t_binary *bin, struct stat stat)
@@ -108,9 +111,8 @@ int			handle_x32(t_binary *bin, struct stat stat)
 	int					ret;
 	struct mach_header	*header;
 
-	header = (struct mach_header*)move_ptr(bin, stat, bin->offset);
-	if (header == NULL)
-		return (ERROR);
+	if (!(header = (struct mach_header*)move_ptr(bin, stat, bin->offset)))
+		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_HDR_STR));
 	bin->offset = sizeof(*header);
 	ret = parse_mach_header_x32(bin, stat, header);
 	if (ret == SUCCESS)
