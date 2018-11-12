@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 11:45:30 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 15:25:51 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ typedef struct			s_binary
 # define FLAG_LT (1 << 9)
 # define FLAG_NO_FILE (1 << 10)
 # define FLAG_MULT_FILE (1 << 11)
-//# define FLAG_ENDIAN (1 << 12)
 
 /*
 ** Errors define
@@ -161,7 +160,6 @@ int						handle_fat(t_binary *bin, struct stat stat);
 /*
 ** utils
 */
-uint32_t				reverse(int32_t x);
 char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, uint8_t n_value, t_binary *bin);
 int						handle_error(const char *input, int type, const char *error);
 int						search_for_flags(t_binary *bin, char **av, int count);

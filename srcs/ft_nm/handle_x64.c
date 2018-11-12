@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 19:02:52 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 12:39:51 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ static void	print_symbol_x64(t_binary *bin)
 		ft_printf("\n%s:\n", bin->path);
 	while (tmp != NULL)
 	{
+		/* while ((bin->opt & FLAG_LU) && (tmp->type == 'U' || tmp->type == 'u')) */
+		/* 	continue ; */
 		if (tmp->type != 'U')
 			ft_printf("%016llx %c %s\n", tmp->value, tmp->type, tmp->name);
 		else

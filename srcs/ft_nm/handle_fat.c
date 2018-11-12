@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 10:28:42 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 15:22:54 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,28 @@ int		parse_fat_header_x32(t_binary *bin, struct stat stat)
 	return (ret);
 }
 
+int search_for_x64(t_binary *bin, struct stat stat, uint32_t limit)
+{
+	uint32_t			count;
+	unsigned long		tmp_off;
+	struct fat_arch		*tmp;
+
+	count = -1;
+	tmp_off = bin->offset;
+	while (++count < limit)
+	{
+		if (!(tmp = move_ptr(bin, stat, tmp_off)))
+			return (0);
+		if (reverse_32(bin->endian, tmp->cputype) == CPU_TYPE_X86_64)
+		{
+			bin->offset = tmp_off;
+			return (parse_fat_header_x32(bin, stat));
+		}
+		tmp_off += sizeof(struct fat_arch);
+	}
+	return (-1);
+}
+
 int		handle_fat(t_binary *bin, struct stat stat)
 {
 	int					ret;
@@ -45,6 +67,8 @@ int		handle_fat(t_binary *bin, struct stat stat)
 		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_FHDR_STR));
 	limit = reverse_32(bin->endian, fat_header->nfat_arch);
 	bin->offset += sizeof(*fat_header);
+	if ((ret = search_for_x64(bin, stat, limit)) != -1)
+		return (ret);
 	if (!(bin->opt & FLAG_MULT_FILE))
 		bin->opt |= FLAG_MULT_FILE;
 	while (++count < limit)
