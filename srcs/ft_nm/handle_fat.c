@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 15:22:54 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 20:41:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ int		parse_fat_header_x32(t_binary *bin, struct stat stat)
 	struct fat_arch *fat;
 	t_binary		bin_cpy;
 
-	fat = move_ptr(bin, stat, bin->offset);
-	if (fat == NULL)
+	if (!(fat = move_ptr(bin, stat, bin->offset)))
 		return (ERROR);
 	ft_memcpy(&bin_cpy, bin, sizeof(*bin));
 	if (bin_cpy.ptr == NULL)
@@ -69,9 +68,11 @@ int		handle_fat(t_binary *bin, struct stat stat)
 	bin->offset += sizeof(*fat_header);
 	if ((ret = search_for_x64(bin, stat, limit)) != -1)
 		return (ret);
-	if (!(bin->opt & FLAG_MULT_FILE))
+	if (!(bin->opt & FLAG_MULT_FILE) && limit > 1)
 		bin->opt |= FLAG_MULT_FILE;
-	while (++count < limit)
+	if (limit == 1)
+		ft_printf("%s:\n", bin->path);
+   	while (++count < limit)
 	{
 		if ((ret = parse_fat_header_x32(bin, stat)) != SUCCESS)
 			return (ret);

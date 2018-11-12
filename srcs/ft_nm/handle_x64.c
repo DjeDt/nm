@@ -6,30 +6,11 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 12:39:51 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 20:31:14 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
-
-static void	print_symbol_x64(t_binary *bin)
-{
-	t_symbol *tmp;
-
-	tmp = bin->sym;
-	if (bin->opt & FLAG_MULT_FILE)
-		ft_printf("\n%s:\n", bin->path);
-	while (tmp != NULL)
-	{
-		/* while ((bin->opt & FLAG_LU) && (tmp->type == 'U' || tmp->type == 'u')) */
-		/* 	continue ; */
-		if (tmp->type != 'U')
-			ft_printf("%016llx %c %s\n", tmp->value, tmp->type, tmp->name);
-		else
-			ft_printf("%16s %c %s\n", "", tmp->type, tmp->name);
-		tmp = tmp->next;
-	}
-}
 
 static int	parse_segment_x64(t_binary *bin, struct stat stat)
 {
@@ -40,13 +21,19 @@ static int	parse_segment_x64(t_binary *bin, struct stat stat)
 
 	count = -1;
 	if (!(segment = move_ptr(bin, stat, bin->offset)))
-		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_SEG_STR));
+	{
+		ft_printf_fd(STDERR_FILENO, "segment error: abort.\n");
+		return (ERROR);
+	}
 	bin->offset += sizeof(*segment);
 	limit = reverse_32(bin->endian, segment->nsects);
 	while (++count < limit)
 	{
 		if (!(section = move_ptr(bin, stat, bin->offset)))
-			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_SECT_STR));
+		{
+			ft_printf_fd(STDERR_FILENO, "section error: abort.\n");
+			return (-1);
+		}
 		push_section_chunk_x64(bin->endian, section, &bin->sect);
 		bin->offset += sizeof(*section);
 	}
@@ -62,13 +49,19 @@ static int	parse_load_command_x64(t_binary *bin, struct stat stat)
 
 	count = -1;
 	if (!(symtab = move_ptr(bin, stat, bin->offset)))
-		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_ST_STR));
+	{
+		ft_printf_fd(STDERR_FILENO, "symtab_command error: abort.\n");
+//		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_ST_STR));
+	}
 	bin->offset = reverse_32(bin->endian, symtab->symoff);
 	limit = reverse_32(bin->endian, symtab->nsyms);
 	while (++count < limit)
 	{
 		if (!(list = move_ptr(bin, stat, bin->offset)))
-			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_NL_STR));
+		{
+			ft_printf_fd(STDERR_FILENO, "nlist error: abort.\n");
+//			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_NL_STR));
+		}
 		if (!(list->n_type & N_STAB))
 		{
 			if (parse_symbol_x64(symtab, list, bin, stat) != SUCCESS)
@@ -93,9 +86,14 @@ static int	parse_mach_header_x64(t_binary *bin, \
 	while (++count < limit && ret == SUCCESS)
 	{
 		if (!(load_command = move_ptr(bin, stat, bin->offset)))
-			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_LC_STR));
+		{
+			ft_printf_fd(STDERR_FILENO, "load_command error. abort.\n");
+			return (ERROR);
+		}
 		if (reverse_32(bin->endian, load_command->cmd) == LC_SEGMENT_64)
+		{
 			ret = parse_segment_x64(bin, stat);
+		}
 		else if (reverse_32(bin->endian, load_command->cmd) == LC_SYMTAB)
 			return (parse_load_command_x64(bin, stat));
 		else

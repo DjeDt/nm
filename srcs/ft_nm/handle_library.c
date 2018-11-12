@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/03 13:59:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 19:01:53 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 20:41:03 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int			parse_object_header(t_binary bin, struct stat stat)
 		if (!(ob_header = (struct ar_hdr*)move_ptr(&bin, stat, bin.offset)))
 			return (ERROR);
 		bin_cpy.offset = 0;
-		bin_cpy.ptr = move_ptr(&bin, stat, \
+		bin_cpy.ptr = move_ptr(&bin, stat,								\
 							bin.offset + get_extended_format(ob_header) \
 							+ sizeof(*ob_header));
 		ft_printf("\n%s(%s):\n", \

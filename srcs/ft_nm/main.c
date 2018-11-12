@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 10:39:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 20:43:17 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,7 @@ int				handle_arch(t_binary *bin, struct stat stat)
 	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
 		ret = handle_library(bin, stat);
 	else
-	{
-		ft_putendl_fd("unknow architecture", STDERR_FILENO);
 		ret = ERROR;
-	}
 	return (ret);
 }
 
@@ -85,7 +82,7 @@ int				main(int ac, char **av)
 		return (ERROR);
 	if (bin.opt & FLAG_NO_FILE)
 		ret = ft_nm(&bin, "a.out");
-	while (count < ac)
+	while (av[count] && count < ac)
 	{
 		if (*av[count] != '-')
 			ret = ft_nm(&bin, av[count]);

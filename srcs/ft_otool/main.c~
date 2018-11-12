@@ -1,24 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/08 18:33:01 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/12 18:58:29 by ddinaut          ###   ########.fr       */
+/*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
+/*   Updated: 2018/10/06 20:32:30 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "nm.h"
+#include "otool.h"
 
-void        ft_puthex(unsigned long l)
+int		main(int ac, char **av)
 {
-	if (l >= 16)
-	{
-		ft_puthex(l / 16);
-		ft_puthex(l % 16);
-	}
-	else
-		ft_putchar(HEX[l]);
+	return (0);
 }

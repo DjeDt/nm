@@ -6,28 +6,11 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 19:02:31 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 15:54:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
-
-static void	print_symbol_x32(t_binary *bin)
-{
-	t_symbol *tmp;
-
-	tmp = bin->sym;
-	if (bin->opt & FLAG_MULT_FILE)
-		ft_printf("\n%s:\n", bin->path);
-	while (tmp != NULL)
-	{
-		if (tmp->type != 'U')
-			ft_printf("%08lx %c %s\n", tmp->value, tmp->type, tmp->name);
-		else
-			ft_printf("%8s %c %s\n", "", tmp->type, tmp->name);
-		tmp = tmp->next;
-	}
-}
 
 static int	parse_segment_x32(t_binary *bin, struct stat stat)
 {
