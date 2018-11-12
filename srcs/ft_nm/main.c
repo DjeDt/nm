@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 19:05:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 10:39:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int				handle_arch(t_binary *bin, struct stat stat)
 
 	ret = SUCCESS;
 	bin->endian = FALSE;
-	magic = reverse_32(bin->endian, *(unsigned int*)bin->ptr);
+	magic = *(unsigned int*)bin->ptr;
 	if (magic == MH_CIGAM_64 || magic == MH_CIGAM || magic == FAT_CIGAM)
 		bin->endian = TRUE;
 	if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)

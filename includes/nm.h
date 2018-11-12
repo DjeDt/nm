@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 11:28:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/12 11:45:30 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,5 +175,14 @@ void					*move_ptr(t_binary *bin, struct stat stat, uint32_t size);
 uint16_t        		reverse_16(int endian, uint16_t x);
 uint32_t        		reverse_32(int endian, uint32_t x);
 uint64_t        		reverse_64(int endian, uint64_t x);
+
+/*
+** sort func
+*/
+void					no_sort(t_symbol *new, t_symbol **symbol);
+void					alpha_sort(t_symbol *new, t_symbol **symbol);
+void					rev_alpha_sort(t_symbol *new, t_symbol **symbol);
+void					sort_numericaly(t_symbol *new, t_symbol **symbol);
+void					rev_sort_numericaly(t_symbol *new, t_symbol **symbol);
 
 #endif

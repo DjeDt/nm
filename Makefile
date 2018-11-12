@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/08 21:04:49 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/12 10:44:06 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -61,6 +61,7 @@ SRCS_NM 	=								\
 			$(DIR_NM)/symbols.c				\
 			$(DIR_NM)/resolve_symbol.c		\
 			$(DIR_NM)/offset.c				\
+			$(DIR_NM)/sort_symbols.c		\
 			$(DIR_NM)/errors.c
 
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
