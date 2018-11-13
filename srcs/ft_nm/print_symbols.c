@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/12 15:48:02 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 15:50:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 18:55:43 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,4 @@ void	print_symbol_x64(t_binary *bin)
 			ft_printf("%16s %c %s\n", "", tmp->type, tmp->name);
 		tmp = tmp->next;
 	}
-
 }

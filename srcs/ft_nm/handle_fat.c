@@ -6,11 +6,35 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/13 14:43:27 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 19:06:07 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
+
+void	print_name(t_binary *bin, struct fat_arch *fat)
+{
+	uint32_t type;
+
+	type = reverse_32(bin->endian, fat->cputype);
+	if (type == CPU_TYPE_POWERPC)
+	{
+		ft_printf("\n%s (%s):\n", bin->path, "for architecture ppc");
+		if (bin->opt & FLAG_MULT_FILE)
+			bin->opt ^= FLAG_MULT_FILE;
+	}
+	else if (type == CPU_TYPE_X86)
+	{
+		ft_printf("\n%s (%s):\n", bin->path, "for architecture i386");
+		if (bin->opt & FLAG_MULT_FILE)
+			bin->opt ^= FLAG_MULT_FILE;
+	}
+	else
+	{
+		if (bin->opt & FLAG_MULT_FILE)
+			bin->opt ^= FLAG_MULT_FILE;
+	}
+}
 
 int	parse_fat_header_x32(t_binary *bin, struct stat stat)
 {
@@ -20,6 +44,7 @@ int	parse_fat_header_x32(t_binary *bin, struct stat stat)
 
 	if (!(fat = move_ptr(bin, stat, bin->offset)))
 		return (ERROR);
+	print_name(bin, fat);
 	ft_memcpy(&bin_cpy, bin, sizeof(*bin));
 	if (bin_cpy.ptr == NULL)
 		return (ERROR);
@@ -68,10 +93,6 @@ int	handle_fat(t_binary *bin, struct stat stat)
 	bin->offset += sizeof(*fat_header);
 	if ((ret = search_for_cputype(bin, stat, limit)) != -1)
 		return (ret);
-	if (!(bin->opt & FLAG_MULT_FILE) && limit > 1)
-		bin->opt |= FLAG_MULT_FILE;
-	if (limit == 1)
-		ft_printf("%s:\n", bin->path);
 	while (++count < limit)
 	{
 		if ((ret = parse_fat_header_x32(bin, stat)) != SUCCESS)
