@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 15:27:57 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 18:56:51 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 13:38:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ uint64_t		reverse_64(int endian, uint64_t x)
 
 void			*move_ptr(t_binary *bin, struct stat stat, uint32_t size)
 {
-	if (bin->ptr + size > bin->ptr + stat.st_size)
+//	if (bin->ptr + size > bin->ptr + stat.st_size)
+	(void)stat;
+	if (bin->ptr + size > bin->end)
 		return (NULL);
 	return (bin->ptr + size);
 }

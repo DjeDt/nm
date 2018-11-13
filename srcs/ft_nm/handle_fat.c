@@ -6,13 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 20:41:06 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 14:43:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-int		parse_fat_header_x32(t_binary *bin, struct stat stat)
+int	parse_fat_header_x32(t_binary *bin, struct stat stat)
 {
 	int				ret;
 	struct fat_arch *fat;
@@ -31,7 +31,7 @@ int		parse_fat_header_x32(t_binary *bin, struct stat stat)
 	return (ret);
 }
 
-int search_for_x64(t_binary *bin, struct stat stat, uint32_t limit)
+int	search_for_cputype(t_binary *bin, struct stat stat, uint32_t limit)
 {
 	uint32_t			count;
 	unsigned long		tmp_off;
@@ -53,7 +53,7 @@ int search_for_x64(t_binary *bin, struct stat stat, uint32_t limit)
 	return (-1);
 }
 
-int		handle_fat(t_binary *bin, struct stat stat)
+int	handle_fat(t_binary *bin, struct stat stat)
 {
 	int					ret;
 	uint32_t			count;
@@ -66,13 +66,13 @@ int		handle_fat(t_binary *bin, struct stat stat)
 		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_FHDR_STR));
 	limit = reverse_32(bin->endian, fat_header->nfat_arch);
 	bin->offset += sizeof(*fat_header);
-	if ((ret = search_for_x64(bin, stat, limit)) != -1)
+	if ((ret = search_for_cputype(bin, stat, limit)) != -1)
 		return (ret);
 	if (!(bin->opt & FLAG_MULT_FILE) && limit > 1)
 		bin->opt |= FLAG_MULT_FILE;
 	if (limit == 1)
 		ft_printf("%s:\n", bin->path);
-   	while (++count < limit)
+	while (++count < limit)
 	{
 		if ((ret = parse_fat_header_x32(bin, stat)) != SUCCESS)
 			return (ret);

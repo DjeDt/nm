@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 14:33:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 15:54:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 13:39:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int			handle_x32(t_binary *bin, struct stat stat)
 
 	if (!(header = move_ptr(bin, stat, bin->offset)))
 		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_HDR_STR));
-	bin->offset = sizeof(*header);
+	bin->offset += sizeof(*header);
 	ret = parse_mach_header_x32(bin, stat, header);
 	if (ret == SUCCESS)
 		print_symbol_x32(bin);

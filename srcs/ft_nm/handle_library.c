@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/03 13:59:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 20:41:03 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 14:42:39 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,20 @@ static unsigned int	get_extended_format(struct ar_hdr *ar_header)
 	return (ret);
 }
 
+static int			launch_object_header(t_binary cpy, struct ar_hdr *ob, \
+										struct stat stat, unsigned int off)
+{
+	cpy.offset = 0;
+	cpy.ptr = move_ptr(&cpy, stat, off + get_extended_format(ob) + sizeof(*ob));
+	if (cpy.ptr + ft_atoi(ob->ar_size) + sizeof(*ob) > cpy.ptr + stat.st_size)
+		return (ERROR);
+	if (cpy.ptr == NULL)
+		return (ERROR);
+	ft_printf("\n%s(%s):\n", cpy.path, (char*)ob + sizeof(*ob));
+	return (handle_arch(&cpy, stat));
+	return (0);
+}
+
 static int			parse_object_header(t_binary bin, struct stat stat)
 {
 	int				ret;
@@ -27,18 +41,15 @@ static int			parse_object_header(t_binary bin, struct stat stat)
 	struct ar_hdr	*ob_header;
 
 	ret = SUCCESS;
-	ft_memcpy(&bin_cpy, &bin, sizeof(bin));
-	while ((off_t)bin.offset < stat.st_size)
+	while (bin.ptr + bin.offset < bin.end)
 	{
-		if (!(ob_header = (struct ar_hdr*)move_ptr(&bin, stat, bin.offset)))
+		ft_memcpy(&bin_cpy, &bin, sizeof(bin));
+		if (!(ob_header = move_ptr(&bin, stat, bin.offset)))
+		{
+			ft_printf_fd(STDERR_FILENO, "error: object header: abort.\n");
 			return (ERROR);
-		bin_cpy.offset = 0;
-		bin_cpy.ptr = move_ptr(&bin, stat,								\
-							bin.offset + get_extended_format(ob_header) \
-							+ sizeof(*ob_header));
-		ft_printf("\n%s(%s):\n", \
-				bin.path, (char*)ob_header + sizeof(*ob_header));
-		ret = handle_arch(&bin_cpy, stat);
+		}
+		ret = launch_object_header(bin_cpy, ob_header, stat, bin.offset);
 		bin.offset += ft_atoi(ob_header->ar_size) + sizeof(*ob_header);
 	}
 	return (ret);
@@ -52,7 +63,10 @@ int					handle_library(t_binary *bin, struct stat stat)
 	bin->offset = SARMAG;
 	ar_header = move_ptr(bin, stat, bin->offset);
 	if (ar_header == NULL)
+	{
+		ft_printf_fd(STDERR_FILENO, "error: ar_hdr not found. abort.\n");
 		return (ERROR);
+	}
 	bin->offset += sizeof(*ar_header) + ft_atoi(ar_header->ar_size);
 	ret = parse_object_header(*bin, stat);
 	return (ret);

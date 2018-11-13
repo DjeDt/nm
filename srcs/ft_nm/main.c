@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 20:43:17 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 14:43:40 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void		setup_struct_values(t_binary *bin, char *path)
 	bin->ptr = NULL;
 	bin->sym = NULL;
 	bin->sect = NULL;
+	bin->end = NULL;
 	bin->path = path;
 	bin->endian = FALSE;
 }
@@ -57,19 +58,6 @@ static int		ft_nm(t_binary *bin, char *path)
 	clean_struct(bin, stat);
 	return (ret);
 }
-
-/*
-**  options a faire en premier :
-**
-**  n : Sort numerically rather than alphabetically.
-**  p : Don't sort; display in symbol-table order.
-**  r : Sort in reverse order.
-**
-**  u : Display only undefined symbols.
-**  j : Just display the symbol names (no value or type).
-**  U : Don't display undefined symbols.
-**  x : Display the symbol table entry's fields in hexadecimal, along with the name as a string.
-*/
 
 int				main(int ac, char **av)
 {

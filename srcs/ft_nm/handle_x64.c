@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/25 20:08:36 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 20:31:14 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 13:36:40 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ static int	parse_load_command_x64(t_binary *bin, struct stat stat)
 	count = -1;
 	if (!(symtab = move_ptr(bin, stat, bin->offset)))
 	{
-		ft_printf_fd(STDERR_FILENO, "symtab_command error: abort.\n");
-//		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_ST_STR));
+		ft_printf_fd(STDERR_FILENO, "error: symtab_command error: abort.\n");
+		return (ERROR);
 	}
 	bin->offset = reverse_32(bin->endian, symtab->symoff);
 	limit = reverse_32(bin->endian, symtab->nsyms);
@@ -60,7 +60,7 @@ static int	parse_load_command_x64(t_binary *bin, struct stat stat)
 		if (!(list = move_ptr(bin, stat, bin->offset)))
 		{
 			ft_printf_fd(STDERR_FILENO, "nlist error: abort.\n");
-//			return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_NL_STR));
+			return (ERROR);
 		}
 		if (!(list->n_type & N_STAB))
 		{
@@ -83,7 +83,7 @@ static int	parse_mach_header_x64(t_binary *bin, \
 	ret = SUCCESS;
 	count = -1;
 	limit = reverse_64(bin->endian, header->ncmds);
-	while (++count < limit && ret == SUCCESS)
+	while (++count < limit)
 	{
 		if (!(load_command = move_ptr(bin, stat, bin->offset)))
 		{
@@ -108,8 +108,11 @@ int			handle_x64(t_binary *bin, struct stat stat)
 	struct mach_header_64	*header;
 
 	if (!(header = move_ptr(bin, stat, bin->offset)))
-		return (handle_error(bin->path, MISSING_PTR_ERR, MISSING_HDR_STR));
-	bin->offset = sizeof(*header);
+	{
+		ft_printf_fd(STDERR_FILENO, "mach_header error: abort.\n");
+		return (ERROR);
+	}
+	bin->offset += sizeof(*header);
 	ret = parse_mach_header_x64(bin, stat, header);
 	if (ret == SUCCESS)
 		print_symbol_x64(bin);

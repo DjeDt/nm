@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 15:54:21 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 14:45:13 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct			s_binary
 	unsigned long		opt;
 	uint32_t			offset;
 	char				*ptr;
+	char				*end;
 	char				*path;
 	t_symbol			*sym;
 	t_section			*sect;
@@ -158,6 +159,7 @@ int						handle_fat(t_binary *bin, struct stat stat);
 */
 char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, uint8_t n_value, t_binary *bin);
 int						handle_error(const char *input, int type, const char *error);
+int						print_error(char *error);
 int						search_for_flags(t_binary *bin, char **av, int count);
 void					print_symbol_x32(t_binary *bin);
 void				    print_symbol_x64(t_binary *bin);

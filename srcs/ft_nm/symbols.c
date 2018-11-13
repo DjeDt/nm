@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/26 16:07:49 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/12 12:32:54 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/13 14:40:42 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ int			parse_symbol_x32(struct symtab_command *symtab, \
 	new->name = resolve_symbol_name(bin, stat, symtab->stroff, lt->n_un.n_strx);
 	new->next = NULL;
 	if (new->name == NULL)
-		return (ERROR);
+	{
+		new->name = "bad string index";
+	}
 	push_symbol_chunk(bin, new, &bin->sym);
 	return (SUCCESS);
 }
@@ -72,7 +74,9 @@ int			parse_symbol_x64(struct symtab_command *symtab, \
 	new->name = resolve_symbol_name(bin, st, symtab->stroff, lt->n_un.n_strx);
 	new->next = NULL;
 	if (new->name == NULL)
-		return (ERROR);
+	{
+		new->name = "bad string index";
+	}
 	push_symbol_chunk(bin, new, &bin->sym);
 	return (SUCCESS);
 }
