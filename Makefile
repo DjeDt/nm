@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/15 14:57:32 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/15 16:28:31 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -69,8 +69,14 @@ SRCS_NM 	=								\
 OBJ_NM = $(SRC_NM:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 SRC_NM = $(addprefix $(SRC_PATH)/,$(SRCS_NM))
 
-SRCS_OTOOL	= \
-			$(DIR_OTOOL)/main.c
+SRCS_OTOOL	=								\
+			$(DIR_OTOOL)/main.c				\
+			$(DIR_OTOOL)/handle_flags.c		\
+			$(DIR_OTOOL)/setup_struct.c		\
+			$(DIR_OTOOL)/handle_x64.c		\
+			$(DIR_OTOOL)/handle_x32.c		\
+			$(DIR_OTOOL)/offset.c			\
+			$(DIR_OTOOL)/errors.c
 
 OBJ_OTOOL = $(SRC_OTOOL:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 SRC_OTOOL = $(addprefix $(SRC_PATH)/,$(SRCS_OTOOL))
@@ -99,7 +105,7 @@ test:
 $(FT_NM): $(OBJ_NM)
 	@make -sC $(LIB_PATH)
 	@make -sC $(PRINTF_PATH)
-	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) -framework Appkit $(OBJ_NM) $(LIBS)
+	@$(CC) -o $(FT_NM) $(FLAGS) $(ADDFLAGS) $(OBJ_NM) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_nm is ready to works\n$(END_COL)"
 
 $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
@@ -111,7 +117,7 @@ $(OBJ_NM): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 $(FT_OTOOL): $(OBJ_OTOOL)
 	@make -sC $(LIB_PATH)
 	@make -sC $(PRINTF_PATH)
-	@$(CC) -o $@ $(FLAGS) $(ADDFLAGS) $(OBJ_OTOOL) $(LIBS)
+	@$(CC) -o $(FT_OTOOL) $(FLAGS) $(ADDFLAGS) $(OBJ_OTOOL) $(LIBS)
 	@printf "$(GREEN)\r\033[Kft_otool is ready to works\n$(END_COL)"
 
 $(OBJ_OTOOL): $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
