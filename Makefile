@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/13 11:54:43 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/15 14:57:32 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -62,6 +62,7 @@ SRCS_NM 	=								\
 			$(DIR_NM)/resolve_symbol.c		\
 			$(DIR_NM)/offset.c				\
 			$(DIR_NM)/sort_symbols.c		\
+			$(DIR_NM)/sort_reverse.c		\
 			$(DIR_NM)/print_symbols.c		\
 			$(DIR_NM)/errors.c
 

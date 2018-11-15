@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:28:45 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/13 14:45:13 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 15:06:16 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,40 +91,6 @@ typedef struct			s_binary
 # define FLAG_NO_FILE (1 << 10)
 # define FLAG_MULT_FILE (1 << 11)
 
-/*
-** Errors define
-*/
-# define IS_DIR	1
-# define ERR_DIR_STR "Is a directory."
-
-# define NOT_ALLOWED 2
-# define ERR_DIR_NA "Permission denied."
-
-# define FSTAT_ERR 3
-# define FSTAT_ERR_STR "fstat failed, abort."
-
-# define MMAP_ERR 4
-# define MMAP_ERR_STR "mmap error: can't allocate ressources to load given binary."
-
-# define MUNMAP_ERR 5
-# define MUNMAPP_ERR_STR "error: can't deallocate given binary"
-
-# define FLAG_UKW 6
-# define FLAG_UKW_STR "Unknown command line argument"
-# define FLAG_UKW_STR2 "Try ./ft_nm -h"
-
-# define DOUBLE_FLAG_ERR 7
-# define DOUBLE_FLAG_ERR_STR "may only occur zero or one times!"
-
-# define MISSING_PTR_ERR 8
-# define MISSING_HDR_STR "input object seems to be corrupted, truncated or malformed (mach_header)."
-# define MISSING_LC_STR "input object seems to be corrupted, truncated or malformed (load_command)."
-# define MISSING_ST_STR "input object seems to be corrupted, truncated or malformed (symtab_command)."
-# define MISSING_NL_STR "input object seems to be corrupted, truncated or malformed (nlist)."
-# define MISSING_SECT_STR "input object seems to be corrupted, truncated or malformed (section)."
-# define MISSING_SEG_STR "input object seems to be corrupted, truncated or malformed (segment_command)."
-# define MISSING_FHDR_STR "input object seems to be corrupted, truncated or malformed (fat header)."
-
 # define NM_USAGE "USAGE: ./ft_nm [options] <input_files>\nOPTIONS: [...]\n"
 
 /*
@@ -132,51 +98,56 @@ typedef struct			s_binary
 */
 int						setup_struct(t_binary *fileinfo, struct stat *stat);
 int						clean_struct(t_binary *fileinfo, struct stat stat);
-int						handle_arch(t_binary *bin, struct stat stat);
+int						handle_arch(t_binary *bin);
 
 /*
 ** x64
 */
-int						handle_x64(t_binary *bin, struct stat stat);
-int						parse_symbol_x64(struct symtab_command *symtab, struct nlist_64 *list, t_binary *bin, struct stat stat);
-void					push_section_chunk_x64(int endian, struct section_64 *chunk, t_section **section);
+int						handle_x64(t_binary *bin);
+int						parse_symbol_x64(struct symtab_command *symtab, \
+										struct nlist_64 *list, t_binary *bin);
+void					push_section_chunk_x64(int endian, \
+								struct section_64 *chunk, t_section **section);
 
 /*
 ** x32
 */
-int						handle_x32(t_binary *bin, struct stat stat);
-int						parse_symbol_x32(struct symtab_command *symtab, struct nlist *list, t_binary *bin, struct stat stat);
-void					push_section_chunk_x32(int endian, struct section *chunk, t_section **section);
+int						handle_x32(t_binary *bin);
+int						parse_symbol_x32(struct symtab_command *symtab, \
+										struct nlist *list, t_binary *bin);
+void					push_section_chunk_x32(int endian, \
+									struct section *chunk, t_section **section);
 
 /*
 ** library && fat
 */
-int						handle_library(t_binary *bin, struct stat stat);
-int						handle_fat(t_binary *bin, struct stat stat);
+int						handle_library(t_binary *bin);
+int						handle_fat(t_binary *bin);
 
 /*
 ** utils
 */
-char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, uint8_t n_value, t_binary *bin);
-int						handle_error(const char *input, int type, const char *error);
+char					resolve_symbol_type(uint8_t n_type, uint8_t n_sect, \
+											uint8_t n_value, t_binary *bin);
 int						print_error(char *error);
 int						search_for_flags(t_binary *bin, char **av, int count);
 void					print_symbol_x32(t_binary *bin);
-void				    print_symbol_x64(t_binary *bin);
+void					print_symbol_x64(t_binary *bin);
 void					free_sect(t_section **section);
 void					free_sym(t_symbol **symbol);
 
 /*
 ** Endianness and offset
 */
-void					*move_ptr(t_binary *bin, struct stat stat, uint32_t size);
-uint16_t        		reverse_16(int endian, uint16_t x);
-uint32_t        		reverse_32(int endian, uint32_t x);
-uint64_t        		reverse_64(int endian, uint64_t x);
+void					*move_ptr(t_binary *bin, uint32_t size);
+uint16_t				reverse_16(int endian, uint16_t x);
+uint32_t				reverse_32(int endian, uint32_t x);
+uint64_t				reverse_64(int endian, uint64_t x);
 
 /*
 ** sort func
 */
+int						sort(t_symbol *curr, t_symbol *new);
 void					no_sort(t_symbol *new, t_symbol **symbol);
 void					alpha_sort(t_symbol *new, t_symbol **symbol);
 void					rev_alpha_sort(t_symbol *new, t_symbol **symbol);

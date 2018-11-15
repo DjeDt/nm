@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 11:04:27 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 14:46:31 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void		setup_struct_values(t_binary *bin, char *path)
 	bin->endian = FALSE;
 }
 
-int				handle_arch(t_binary *bin, struct stat stat)
+int				handle_arch(t_binary *bin)
 {
 	int				ret;
 	unsigned int	magic;
@@ -34,15 +34,15 @@ int				handle_arch(t_binary *bin, struct stat stat)
 	if (magic == MH_CIGAM_64 || magic == MH_CIGAM || magic == FAT_CIGAM)
 		bin->endian = TRUE;
 	if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
-		ret = handle_x64(bin, stat);
+		ret = handle_x64(bin);
 	else if (magic == MH_MAGIC || magic == MH_CIGAM)
-		ret = handle_x32(bin, stat);
+		ret = handle_x32(bin);
 	else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
-		ret = handle_fat(bin, stat);
+		ret = handle_fat(bin);
 	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
-		ret = handle_library(bin, stat);
+		ret = handle_library(bin);
 	else
-		ret = ERROR;
+		ret = print_error("error: unknow architecture. abort.");
 	return (ret);
 }
 
@@ -54,7 +54,7 @@ static int		ft_nm(t_binary *bin, char *path)
 	setup_struct_values(bin, path);
 	if (setup_struct(bin, &stat) != SUCCESS)
 		return (ERROR);
-	ret = handle_arch(bin, stat);
+	ret = handle_arch(bin);
 	clean_struct(bin, stat);
 	return (ret);
 }

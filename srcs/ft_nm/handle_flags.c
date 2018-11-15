@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/27 19:14:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/09 19:00:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 14:53:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,17 @@ static int	set_option(unsigned long int *opt, int flag, char c)
 {
 	if ((*opt & flag))
 	{
-		handle_error("input", DOUBLE_FLAG_ERR, &c);
+		ft_printf_fd(STDERR_FILENO, "error: flag: %c is already set\n", c);
 		return (FLAG_ERROR);
 	}
-	else
-		(*opt) |= flag;
+	(*opt) |= flag;
 	return (SUCCESS);
+}
+
+static int	unknow_flag(char c)
+{
+	ft_printf_fd(STDERR_FILENO, "error: flag unknow: %c. abort.\n", c);
+	return (ERROR);
 }
 
 static int	print_help(void)
@@ -52,7 +57,7 @@ static int	handle_options(unsigned long int *opt, char *input)
 		else if (*input == 'j')
 			set_option(opt, FLAG_LJ, (*input));
 		else
-			return (handle_error("ft_nm", FLAG_UKW, input));
+			return (unknow_flag(*input));
 		input++;
 	}
 	return (SUCCESS);
