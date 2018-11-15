@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 11:07:14 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 11:25:40 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,19 @@ void	print_name(t_binary *bin, struct fat_arch *fat, uint32_t limit)
 	type = reverse_32(bin->endian, fat->cputype);
 	if (limit == 1)
 		ft_printf("%s:\n", bin->path);
-	else if (type == CPU_TYPE_POWERPC)
-		ft_printf("\n%s (%s):\n", bin->path, "for architecture ppc");
-	else if (type == CPU_TYPE_X86)
-		ft_printf("\n%s (%s):\n", bin->path, "for architecture i386");
+	else if (type == CPU_TYPE_POWERPC || type == CPU_TYPE_X86 || type == CPU_TYPE_ARM64 || type == CPU_TYPE_ARM)
+	{
+		if (type == CPU_TYPE_POWERPC)
+			ft_printf("\n%s (%s):\n", bin->path, "for architecture ppc");
+		else if (type == CPU_TYPE_X86)
+			ft_printf("\n%s (%s):\n", bin->path, "for architecture i386");
+		else if (type == CPU_TYPE_ARM)
+			ft_printf("\n%s (%s):\n", bin->path, "for architecture armv7");
+		else
+			ft_printf("\n%s (%s):\n", bin->path, "for architecture arm64");
+		if (bin->opt & FLAG_MULT_FILE)
+			bin->opt ^= FLAG_MULT_FILE;
+	}
 }
 
 int	parse_fat_header_x32(t_binary *bin, struct stat stat, uint32_t limit)
