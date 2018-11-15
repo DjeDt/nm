@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/13 18:57:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 11:04:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int				main(int ac, char **av)
 	count = 1;
 	if (search_for_flags(&bin, av, count) != SUCCESS)
 		return (ERROR);
-	if (bin.opt & FLAG_MULT_FILE)
 	if (bin.opt & FLAG_NO_FILE)
 		ret = ft_nm(&bin, "a.out");
 	while (av[count] && count < ac)

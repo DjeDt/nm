@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/03 13:59:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/13 14:42:39 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 11:09:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static int			launch_object_header(t_binary cpy, struct ar_hdr *ob, \
 		return (ERROR);
 	ft_printf("\n%s(%s):\n", cpy.path, (char*)ob + sizeof(*ob));
 	return (handle_arch(&cpy, stat));
-	return (0);
 }
 
 static int			parse_object_header(t_binary bin, struct stat stat)

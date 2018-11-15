@@ -6,37 +6,26 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/13 19:06:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/15 11:07:14 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-void	print_name(t_binary *bin, struct fat_arch *fat)
+void	print_name(t_binary *bin, struct fat_arch *fat, uint32_t limit)
 {
 	uint32_t type;
 
 	type = reverse_32(bin->endian, fat->cputype);
-	if (type == CPU_TYPE_POWERPC)
-	{
+	if (limit == 1)
+		ft_printf("%s:\n", bin->path);
+	else if (type == CPU_TYPE_POWERPC)
 		ft_printf("\n%s (%s):\n", bin->path, "for architecture ppc");
-		if (bin->opt & FLAG_MULT_FILE)
-			bin->opt ^= FLAG_MULT_FILE;
-	}
 	else if (type == CPU_TYPE_X86)
-	{
 		ft_printf("\n%s (%s):\n", bin->path, "for architecture i386");
-		if (bin->opt & FLAG_MULT_FILE)
-			bin->opt ^= FLAG_MULT_FILE;
-	}
-	else
-	{
-		if (bin->opt & FLAG_MULT_FILE)
-			bin->opt ^= FLAG_MULT_FILE;
-	}
 }
 
-int	parse_fat_header_x32(t_binary *bin, struct stat stat)
+int	parse_fat_header_x32(t_binary *bin, struct stat stat, uint32_t limit)
 {
 	int				ret;
 	struct fat_arch *fat;
@@ -44,7 +33,7 @@ int	parse_fat_header_x32(t_binary *bin, struct stat stat)
 
 	if (!(fat = move_ptr(bin, stat, bin->offset)))
 		return (ERROR);
-	print_name(bin, fat);
+	print_name(bin, fat, limit);
 	ft_memcpy(&bin_cpy, bin, sizeof(*bin));
 	if (bin_cpy.ptr == NULL)
 		return (ERROR);
@@ -71,7 +60,7 @@ int	search_for_cputype(t_binary *bin, struct stat stat, uint32_t limit)
 		if (reverse_32(bin->endian, tmp->cputype) == CPU_TYPE_X86_64)
 		{
 			bin->offset = tmp_off;
-			return (parse_fat_header_x32(bin, stat));
+			return (parse_fat_header_x32(bin, stat, limit));
 		}
 		tmp_off += sizeof(struct fat_arch);
 	}
@@ -95,7 +84,7 @@ int	handle_fat(t_binary *bin, struct stat stat)
 		return (ret);
 	while (++count < limit)
 	{
-		if ((ret = parse_fat_header_x32(bin, stat)) != SUCCESS)
+		if ((ret = parse_fat_header_x32(bin, stat, limit)) != SUCCESS)
 			return (ret);
 		bin->offset += sizeof(struct fat_arch);
 	}
