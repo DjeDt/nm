@@ -6,13 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 12:32:52 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 14:55:17 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/16 18:25:12 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-void	print_name(t_binary *bin, struct fat_arch *fat, uint32_t limit)
+static void	print_name(t_binary *bin, struct fat_arch *fat, uint32_t limit)
 {
 	uint32_t type;
 
@@ -36,7 +36,7 @@ void	print_name(t_binary *bin, struct fat_arch *fat, uint32_t limit)
 	}
 }
 
-int		parse_fat_header_x32(t_binary *bin, uint32_t limit)
+static int	parse_fat_header_x32(t_binary *bin, uint32_t limit)
 {
 	int				ret;
 	struct fat_arch *fat;
@@ -46,8 +46,6 @@ int		parse_fat_header_x32(t_binary *bin, uint32_t limit)
 		return (print_error("fat_arch error: abort,"));
 	print_name(bin, fat, limit);
 	ft_memcpy(&bin_cpy, bin, sizeof(*bin));
-	if (bin_cpy.ptr == NULL)
-		return (ERROR);
 	bin_cpy.ptr = move_ptr(bin, reverse_32(bin->endian, fat->offset));
 	if (bin_cpy.ptr == NULL)
 		return (ERROR);
@@ -56,7 +54,7 @@ int		parse_fat_header_x32(t_binary *bin, uint32_t limit)
 	return (ret);
 }
 
-int		search_for_cputype(t_binary *bin, uint32_t limit)
+static int	search_for_cputype(t_binary *bin, uint32_t limit)
 {
 	uint32_t			count;
 	unsigned long		tmp_off;
@@ -67,7 +65,7 @@ int		search_for_cputype(t_binary *bin, uint32_t limit)
 	while (++count < limit)
 	{
 		if (!(tmp = move_ptr(bin, tmp_off)))
-			return (0);
+			return (print_error("fat_arch not found: error: abort."));
 		if (reverse_32(bin->endian, tmp->cputype) == CPU_TYPE_X86_64)
 		{
 			bin->offset = tmp_off;
@@ -78,7 +76,7 @@ int		search_for_cputype(t_binary *bin, uint32_t limit)
 	return (-1);
 }
 
-int		handle_fat(t_binary *bin)
+int			handle_fat(t_binary *bin)
 {
 	int					ret;
 	uint32_t			count;

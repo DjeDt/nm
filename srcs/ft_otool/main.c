@@ -6,14 +6,15 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 16:23:10 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/16 20:50:50 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "otool.h"
 
-void	setup_struct_value(t_binary *bin, char *path)
+static void	setup_struct_value(t_binary *bin, char *path)
 {
+	bin->opt = 0;
 	bin->endian = 0;
 	bin->offset = 0;
 	bin->ptr = NULL;
@@ -21,7 +22,7 @@ void	setup_struct_value(t_binary *bin, char *path)
 	bin->path = path;
 }
 
-int		handle_arch(t_binary *bin)
+int			handle_arch(t_binary *bin)
 {
 	int				ret;
 	unsigned int	magic;
@@ -35,12 +36,16 @@ int		handle_arch(t_binary *bin)
 		ret = handle_x64(bin);
 	else if (magic == MH_MAGIC || magic == MH_CIGAM)
 		ret = handle_x32(bin);
+	else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
+		ret = handle_fat(bin);
+	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
+		ret = handle_library(bin);
 	else
-		ret = print_error("error: unknow architecture. abort.");
+		ft_printf_fd(1, "%s: is not an object file\n", bin->path);
 	return (ret);
 }
 
-int		ft_otool(t_binary *bin, char *path)
+static int		ft_otool(t_binary *bin, char *path)
 {
 	int			ret;
 	struct stat	stat;
@@ -53,7 +58,7 @@ int		ft_otool(t_binary *bin, char *path)
 	return (ret);
 }
 
-int		main(int ac, char **av)
+int			main(int ac, char **av)
 {
 	int			count;
 	t_binary	bin;

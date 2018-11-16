@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:31:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 17:49:40 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/16 14:42:51 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,11 @@ typedef	struct		s_binary
 **	Options define
 */
 # define FLAG_LT (1 << 0)
+# define PRINT_NAME (1 << 1)
 # define FLAG_NO_FILE (1 << 10)
 # define FLAG_MULT_FILE (1 << 11)
+
+# define OTOOL_USAGE "Usage: ft_otool [-t] <object file>"
 
 /*
 ** main struct
@@ -72,12 +75,15 @@ int						handle_x32(t_binary *bin);
 /*
 ** library and fat
 */
+int						handle_fat(t_binary *bin);
+int						handle_library(t_binary *bin);
 
 /*
 ** utils
 */
-int						search_for_flags(t_binary *bin, char **av, int count);
+int						handle_arch(t_binary *bin);
 int						print_error(char *error);
+void					print_hexa(char *data, uint64_t *count, uint64_t *count2, t_binary *bin);
 
 /*
 ** endianess and offset

@@ -6,7 +6,7 @@
 #    By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/08 11:35:20 by ddinaut           #+#    #+#              #
-#    Updated: 2018/11/15 16:28:31 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/11/16 14:17:30 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -71,10 +71,12 @@ SRC_NM = $(addprefix $(SRC_PATH)/,$(SRCS_NM))
 
 SRCS_OTOOL	=								\
 			$(DIR_OTOOL)/main.c				\
-			$(DIR_OTOOL)/handle_flags.c		\
 			$(DIR_OTOOL)/setup_struct.c		\
+			$(DIR_OTOOL)/print_x32.c		\
 			$(DIR_OTOOL)/handle_x64.c		\
 			$(DIR_OTOOL)/handle_x32.c		\
+			$(DIR_OTOOL)/handle_library.c	\
+			$(DIR_OTOOL)/handle_fat.c		\
 			$(DIR_OTOOL)/offset.c			\
 			$(DIR_OTOOL)/errors.c
 

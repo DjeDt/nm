@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/06 20:29:19 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 14:46:31 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/16 20:50:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int				handle_arch(t_binary *bin)
 	else if (ft_strncmp(bin->ptr, ARMAG, SARMAG) == 0)
 		ret = handle_library(bin);
 	else
-		ret = print_error("error: unknow architecture. abort.");
+		ft_printf_fd(STDERR_FILENO, "%s: is not an object file\n", bin->path);//ret = print_error("error: unknow architecture. abort.");
 	return (ret);
 }
 

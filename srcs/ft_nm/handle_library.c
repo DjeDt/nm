@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/03 13:59:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/11/15 14:34:53 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/11/16 14:35:24 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static unsigned int	get_extended_format(struct ar_hdr *ar_header)
 static int			launch_object_header(t_binary cpy, struct ar_hdr *ob, \
 										unsigned int off)
 {
-	cpy.offset = 0;
 	cpy.ptr = move_ptr(&cpy, off + get_extended_format(ob) + sizeof(*ob));
 	if (cpy.ptr == NULL)
 		return (ERROR);
@@ -59,12 +58,8 @@ int					handle_library(t_binary *bin)
 	struct ar_hdr	*ar_header;
 
 	bin->offset = SARMAG;
-	ar_header = move_ptr(bin, bin->offset);
-	if (ar_header == NULL)
-	{
-		ft_printf_fd(STDERR_FILENO, "error: ar_hdr not found. abort.\n");
-		return (ERROR);
-	}
+	if (!(ar_header = move_ptr(bin, bin->offset)))
+		return (print_error("error: ar_hdr not found. abort."));
 	bin->offset += sizeof(*ar_header) + ft_atoi(ar_header->ar_size);
 	ret = parse_object_header(*bin);
 	return (ret);
